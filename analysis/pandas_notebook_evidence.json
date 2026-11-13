@@ -1,0 +1,43 @@
+{
+  "source_html_filename": "01_Opioid_Project_Data_Exploration.html",
+  "source_html_sha256": "0b9497dc273b5771e84fbad0ea3410a84cbee14991ce1309d0230288478b135b",
+  "extraction": "Decoded base64 and URL-encoded notebook model as JSON, without executing HTML/scripts/notebook cells.",
+  "cell_index_convention": "Zero-based order in exported commands array.",
+  "cells": [
+    {
+      "cell_index": 13,
+      "code": "# Convert provisional overdose deaths to numeric while preserving suppressed values as missing\noverdose_clean_pdf[\"Overdose_Deaths\"] = pd.to_numeric(\n    overdose_clean_pdf[\"Provisional Drug Overdose Deaths\"],\n    errors=\"coerce\"\n)\n\nprint(\n    \"Available overdose values:\",\n    overdose_clean_pdf[\"Overdose_Deaths\"].notna().sum()\n)\n\nprint(\n    \"Missing or suppressed overdose values:\",\n    overdose_clean_pdf[\"Overdose_Deaths\"].isna().sum()\n)",
+      "saved_stdout": [
+        "Available overdose values: 101338\nMissing or suppressed overdose values: 87302\n"
+      ]
+    },
+    {
+      "cell_index": 20,
+      "code": "# Examine missing values in the two primary analytical variables after merging\nprint(\"Missing values in merged dataset:\")\n\nprint(\n    merged_pdf[\n        [\"Dispensing_Rate\", \"Overdose_Deaths\"]\n    ].isna().sum()\n)\n\nprint(\"\\nTotal merged records:\", len(merged_pdf))",
+      "saved_stdout": [
+        "Missing values in merged dataset:\nDispensing_Rate     297\nOverdose_Deaths    7298\ndtype: int64\n\nTotal merged records: 15710\n"
+      ]
+    },
+    {
+      "cell_index": 22,
+      "code": "# Create an analysis-ready dataset containing records with both dispensing and overdose values available\nanalysis_pdf = merged_pdf.dropna(\n    subset=[\n        \"Dispensing_Rate\",\n        \"Overdose_Deaths\"\n    ]\n).copy()\n\nprint(\"Complete merged dataset:\", merged_pdf.shape)\nprint(\"Analysis-ready dataset:\", analysis_pdf.shape)",
+      "saved_stdout": [
+        "Complete merged dataset: (15710, 7)\nAnalysis-ready dataset: (8180, 7)\n"
+      ]
+    },
+    {
+      "cell_index": 23,
+      "code": "# Count the number of usable county observations available for each year in the analysis-ready dataset\nyear_counts = (\n    analysis_pdf[\"Year\"]\n    .value_counts()\n    .sort_index()\n)\n\nprint(\"Usable observations by year:\")\nprint(year_counts)",
+      "saved_stdout": [
+        "Usable observations by year:\nYear\n2020    1584\n2021    1689\n2022    1680\n2023    1668\n2024    1559\nName: count, dtype: int64\n"
+      ]
+    },
+    {
+      "cell_index": 24,
+      "code": "# Perform final validation checks before using the cleaned and merged dataset for analysis\nprint(\n    \"Duplicate Year-FIPS records:\",\n    analysis_pdf.duplicated(\n        subset=[\"Year\", \"FIPS\"]\n    ).sum()\n)\n\nprint(\n    \"Missing dispensing rates:\",\n    analysis_pdf[\"Dispensing_Rate\"].isna().sum()\n)\n\nprint(\n    \"Missing overdose deaths:\",\n    analysis_pdf[\"Overdose_Deaths\"].isna().sum()\n)\n\nprint(\n    \"Number of unique counties:\",\n    analysis_pdf[\"FIPS\"].nunique()\n)\n\nprint(\n    \"Years represented:\",\n    sorted(analysis_pdf[\"Year\"].unique())\n)",
+      "saved_stdout": [
+        "Duplicate Year-FIPS records: 0\nMissing dispensing rates: 0\nMissing overdose deaths: 0\nNumber of unique counties: 2385\nYears represented: [np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024)]\n"
+      ]
+    }
+  ]
+}

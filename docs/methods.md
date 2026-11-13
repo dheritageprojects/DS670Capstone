@@ -14,7 +14,7 @@ Provisional mortality values may be revised or incomplete. Freeze and document s
 
 ## Verified mappings and remaining source questions
 
-Uploaded-file column mappings, numeric months, FIPS normalization, suppression blanks, display bins, and name-alias pairs have been inspected; see `source_inspection.md`. CDC publication identity, source units, suppression definitions, and geographic attribution are now verified; see `source_citations.md`. Exact export/download and uploaded-release provenance remain incomplete. The previous pandas implementation is needed to compare its month selection, release, and county-universe rules. Target counts alone cannot establish those choices.
+Uploaded-file column mappings, numeric months, FIPS normalization, suppression blanks, display bins, and name-alias pairs have been inspected; see `source_inspection.md`. CDC publication identity, source units, suppression definitions, and geographic attribution are now verified; see `source_citations.md`. Exact export/download and uploaded-release provenance remain incomplete. The supplied pandas HTML confirms year selection, December extraction, duplicate handling, and inner-join rules. A controlled reproduction identifies comma-formatted count coercion as the cause of all historical metric differences; see `pandas_reconciliation.md`. Byte identity of the newly uploaded oversized overdose CSV remains unverified, separately from this demonstrated parsing defect.
 
 ## Verified geographic attribution limitation
 

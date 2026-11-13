@@ -16,7 +16,7 @@ def chart(name, kind, dimension, metric, expression, title, x,y, description='',
     spec={'version':3,'widgetType':kind,'frame':frame(title,description),'encodings':{'x':{'fieldName':dimension,'scale':{'type':'quantitative' if numeric_x else 'categorical'}},'y':{'fieldName':metric,'scale':{'type':'quantitative'}}}}
     add(name,spec,fields,x,y)
 # Add methodology text and shared field filters without imputing any values.
-layout.append({'widget':{'name':'intro','textbox_spec':'# U.S. Opioid Dispensing and Overdose Trends | 2020–2024\nDecember reported 12-month-ending overdose counts; suppressed values stay missing. Counts are not population-adjusted death rates. County dispensing means are unweighted, not state/national rates. Observed death subtotals depend on reporting coverage. Association does not establish causation. County identifiers are FIPS codes. Validation differences remain unresolved.'},'position':dict(x=0,y=0,width=6,height=3)})
+layout.append({'widget':{'name':'intro','textbox_spec':'# U.S. Opioid Dispensing and Overdose Trends | 2020–2024\nDecember reported 12-month-ending overdose counts; suppressed values stay missing. Counts are not population-adjusted death rates. County dispensing means are unweighted, not state/national rates. Observed death subtotals depend on reporting coverage. Association does not establish causation. County identifiers are FIPS codes. Historical differences are explained by comma-formatted counts discarded by the original pandas parser.'},'position':dict(x=0,y=0,width=6,height=3)})
 for x,(field,title) in enumerate([('year','Year'),('state','State'),('county_fips','County FIPS')]):
     add('filter_'+field,{'version':2,'widgetType':'filter-multi-select','frame':frame(title),'encodings':{'fields':[{'fieldName':field,'queryName':'main_query'}]}},[(field,f'`{field}`')],x*2,3,2,2)
 # Define trends, reporting coverage, geographic comparisons, and missingness charts.
@@ -34,7 +34,7 @@ chart('missing_dispensing','bar','year','missing_counties','SUM(`missing_dispens
 cols=['state','county_fips','year','dispensing_rate','overdose_count','missing_dispensing','missing_overdose']
 add('county_details',{'version':2,'widgetType':'table','frame':frame('County-year details'),'encodings':{'columns':[{'fieldName':c} for c in cols]}},[(c,f'`{c}`') for c in cols],0,25,6,7,disaggregated=True)
 cols=['metric','actual','target','difference']
-add('quality_report',{'version':2,'widgetType':'table','frame':frame('Pipeline validation — not affected by dashboard filters','Differences from prior pandas targets remain under investigation.'),'encodings':{'columns':[{'fieldName':c} for c in cols]}},[(c,f'`{c}`') for c in cols],0,32,6,5,dataset='quality',disaggregated=True)
+add('quality_report',{'version':2,'widgetType':'table','frame':frame('Pipeline validation — not affected by dashboard filters','Historical pandas conversion discarded 23 comma-formatted reported counts; current values retain them.'),'encodings':{'columns':[{'fieldName':c} for c in cols]}},[(c,f'`{c}`') for c in cols],0,32,6,5,dataset='quality',disaggregated=True)
 # Save the complete draft definition; publishing is a separate action.
 definition={'datasets':datasets,'pages':[{'name':'overview','displayName':'County trends and coverage','layout':layout}]}
 if __name__=='__main__':

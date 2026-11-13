@@ -1,0 +1,2 @@
+# Historical notebook reproduction; not used for the primary PySpark pipeline.
+pandas==2.2.3

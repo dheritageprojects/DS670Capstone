@@ -1,0 +1,48 @@
+{
+  "pandas_version": "2.2.3",
+  "method": "Historical read_csv defaults and pd.to_numeric(errors=\"coerce\") versus identical steps with literal comma removal before numeric conversion.",
+  "metrics": {
+    "legacy": {
+      "raw_dispensing": 18864,
+      "raw_overdose": 226368,
+      "matching_fips": 3142,
+      "merged_county_years": 15710,
+      "complete_observations": 8180,
+      "complete_counties": 2385,
+      "missing_dispensing": 297,
+      "missing_overdose": 7298,
+      "complete_by_year": {
+        "2020": 1584,
+        "2021": 1689,
+        "2022": 1680,
+        "2023": 1668,
+        "2024": 1559
+      }
+    },
+    "corrected": {
+      "raw_dispensing": 18864,
+      "raw_overdose": 226368,
+      "matching_fips": 3142,
+      "merged_county_years": 15710,
+      "complete_observations": 8203,
+      "complete_counties": 2388,
+      "missing_dispensing": 297,
+      "missing_overdose": 7275,
+      "complete_by_year": {
+        "2020": 1588,
+        "2021": 1694,
+        "2022": 1685,
+        "2023": 1674,
+        "2024": 1562
+      }
+    }
+  },
+  "recovered_county_years": 23,
+  "new_complete_counties": [
+    "04013",
+    "06037",
+    "17031"
+  ],
+  "uploaded_overdose_csv_byte_identity_verified": false,
+  "overdose_input_note": "Used previously supplied frozen overdose ZIP; newly re-uploaded CSV exceeds the transfer limit. Historical saved metrics and yearly counts reproduced exactly."
+}

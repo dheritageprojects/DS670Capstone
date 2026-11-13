@@ -17,7 +17,7 @@ Legend: **Done** = implemented with stated evidence; **Partial** = implemented b
 | Never sum overlapping 12-month-ending counts | Done | Snapshot selection and AVG used across windows. Sums of observed counts are across counties for a selected annual measure, or across non-overlapping calendar years when explicitly selected in the original dashboard; neither constructs annual deaths from monthly windows. |
 | Never zero-fill suppression | Done | Missing measures and coverage flags retained; zero preservation tested. |
 | Distinguish reported and derived/imputed values | Done | December classified as reported; smoothing classified as derived means, not annual death estimates; no analyst imputation. CDC dispensing rates are explicitly identified as source estimates. |
-| Validate integrated county-year data | Partial | Structural and numeric checks pass; five of eight historical targets match. Three differences remain unexplained, so historical replication is incomplete. |
+| Validate integrated county-year data | Done | Structural checks pass. Historical pandas metrics reproduce exactly; comma normalization explains all three current differences. Row-level recovery and regression tests are recorded in `pandas_reconciliation.md`. Exact bytes of the newly re-uploaded oversized overdose CSV remain unverified. |
 | Interactive dashboard | Done | Existing two-page draft with user-reported acceptance/review. No independent browser acceptance test; publication is separate. |
 | Pipeline architecture diagram | Done | Mermaid architecture in `architecture.md`. No exported image required or fabricated. |
 | Automated data-quality checks and documentation | Done | CI source/hash checks, Spark execution, persisted local tables, strict-window checks, statistical reference tests, and quality documentation. CI does not verify Unity Catalog/Delta behavior or browser rendering. |
@@ -57,12 +57,12 @@ Legend: **Done** = implemented with stated evidence; **Partial** = implemented b
 | Raw overdose | 226,368 | 226,368 | Match |
 | Matching county FIPS | 3,142 | 3,142 | Match |
 | Common county-years | 15,710 | 15,710 | Match |
-| Complete observations | 8,203 | 8,180 | Open: +23 |
-| Complete-case counties | 2,388 | 2,385 | Open: +3 |
+| Complete observations | 8,203 | 8,180 | Explained: +23 reported values recovered |
+| Complete-case counties | 2,388 | 2,385 | Explained: +3 complete-case counties |
 | Missing dispensing | 297 | 297 | Match |
-| Missing overdose | 7,275 | 7,298 | Open: −23 |
+| Missing overdose | 7,275 | 7,298 | Explained: −23 numeric parse failures |
 
-No tolerance was pre-agreed that makes the differences acceptable. Source revisions and old processing rules are hypotheses, not established explanations. Previous pandas code/source release is needed for a row-level reconciliation.
+All historical targets are now reproduced using the original parsing behavior. The original `pd.to_numeric(errors="coerce")` coerced comma-formatted counts to missing. Removing commas alone recovers 23 reported values and yields all current metrics. This is a demonstrated parsing correction, not an assumed tolerance or a source-revision explanation. See the complete row-level reconciliation.
 
 ## Final deliverables and submission gaps
 
@@ -71,7 +71,7 @@ No tolerance was pre-agreed that makes the differences acceptable. Source revisi
 | Working Databricks primary pipeline | Done | Primary outputs verified; capture managed runtime/job details for stronger handoff evidence. |
 | Working interactive dashboard | Done | User-reviewed draft. Confirm final audience and publication if required; no claim it is published. |
 | Reproducible code | Partial | Frozen snapshots, checksums, CI, exact queries/results and runbook available. Exact export/download and snapshot release history and managed runtime metadata remain missing. CI dependency is pinned but not a full lockfile. |
-| Data-quality documentation | Done | Structural checks, coverage, suppression, aliases, geography, target differences documented. Full resolution of discrepancies remains open. |
+| Data-quality documentation | Done | Structural checks, coverage, suppression, aliases, geography, target differences documented. Historical discrepancies are resolved as a reproduced comma-parsing defect; original release provenance remains open. |
 | Pipeline diagram | Done | Mermaid source updated for current architecture. |
 | Final capstone report | Partial | Draft in `capstone_report.md`, based on verified findings. Verified CDC source citations added; still needs student/course/advisor details, exact snapshot release history, citation-style/rubric alignment, and academic review. |
 | Presentation | Open | No slide deck requested or created in this increment. |
@@ -79,10 +79,10 @@ No tolerance was pre-agreed that makes the differences acceptable. Source revisi
 ## Recommended closeout order
 
 1. Run and read back `02_sensitivity.py` on Databricks Delta; retain execution evidence.
-2. Supply exact export/download and snapshot release history plus the previous pandas implementation, then reconcile or formally document benchmark differences.
+2. Supply exact export/download and snapshot release history; retain the completed pandas reconciliation and verify the new oversized CSV via ZIP if byte identity is required.
 3. Review the report draft and add university-required front matter, citations, and formatting.
 4. Decide dashboard audience/publication and prepare the final presentation if required.
 
 ## Source documentation update
 
-The user supplied both CDC source pages, verified November 13, 2026. Publication titles, dispensing units/source-estimation basis, prescriber-versus-resident geography, mortality windows, suppression rules, and mortality dataset ID are now documented in `source_citations.md`. Source landing-page identification is complete. Exact original export/download and uploaded-release provenance remain open. These links do not explain the historical 23-observation discrepancy.
+The user supplied both CDC source pages, verified November 13, 2026. Publication titles, dispensing units/source-estimation basis, prescriber-versus-resident geography, mortality windows, suppression rules, and mortality dataset ID are now documented in `source_citations.md`. Source landing-page identification is complete. Exact original export/download and uploaded-release provenance remain open. These links identify source definitions; the separately supplied pandas HTML and controlled rerun explain the historical 23-observation discrepancy.

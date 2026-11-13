@@ -7,7 +7,7 @@ The supplied CDC snapshots, primary 2020–2024 county-year pipeline, strict ann
 ## Software and access
 
 - Git and a checkout of this repository; record `git rev-parse HEAD` for each run.
-- Local/CI: Python 3.12, Java 21, PySpark 4.0.1. `requirements-ci.txt` pins the direct Spark dependency; it is not a complete environment lockfile. GitHub uses `ubuntu-latest`, so its OS image can change.
+- Local/CI: Python 3.12, Java 21, PySpark 4.0.1. `requirements-ci.txt` pins Spark and includes pandas 2.2.3 for historical reference tests; it is not a complete environment lockfile. GitHub uses `ubuntu-latest`, so its OS image can change.
 - Databricks: Free Edition Python serverless compute, permission to use the `workspace` catalog, create/use `workspace.capstone`, create/write its `source_files` Volume, and create/overwrite project tables. The exact managed Databricks runtime version was not captured; do not equate the CI Spark version with it.
 - Notebook setup downloads only from `raw.githubusercontent.com`, using HTTPS and fixed SHA-256 checks. If the workspace blocks outbound downloads, upload the verified CSVs to the same Volume and run `01_pipeline.py` with explicit paths instead.
 - Dashboard: SQL warehouse access plus read permission on primary tables and, for sensitivity, the source Volume. Genie authentication does not grant this assistant notebook execution tools. Do not store credentials in Git.
@@ -51,4 +51,8 @@ The initial `dashboard/build_dashboard.py` builds only the original baseline pag
 - Live sensitivity coverage query: verified in Databricks; source observations exported in `docs/sensitivity_coverage.csv`.
 - Original dashboard/filter behavior: explicit user confirmation. Sensitivity page: user reported review, with no failure reported; no independent browser test or screenshot is claimed.
 - Research: full provider-result exports plus independent source calculations and automated tests.
-- Still required: exact original export/download and uploaded-release metadata; previous pandas code or release for the 23-observation discrepancy; executed sensitivity Delta-table evidence; final report author/course/advisor details and rubric; publication/audience decision.
+- Still required: exact original export/download and uploaded-release metadata; byte identity of the newly re-uploaded oversized overdose CSV if required (historical pandas parsing discrepancy is now reproduced and resolved); executed sensitivity Delta-table evidence; final report author/course/advisor details and rubric; publication/audience decision.
+
+## Historical pandas reproduction
+
+`python analysis/reconcile_pandas.py` reproduces the original notebook metrics and the corrected result side by side, using frozen inputs and the pandas version pinned in `requirements-reconciliation.txt`. The code is an independently written reproduction of reviewed steps, not execution of uploaded HTML. Selected original cells/outputs and the HTML hash are preserved in `analysis/pandas_notebook_evidence.json`; the full change list is `analysis/pandas_reconciliation_rows.csv`. The original source hashes, dashboard data, and research outputs remain unchanged.

@@ -1,0 +1,24 @@
+county_fips,year,state,county,source_count,corrected_count
+04013,2020,Arizona,Maricopa County,"1,616",1616.0
+04013,2021,Arizona,Maricopa County,"1,697",1697.0
+04013,2022,Arizona,Maricopa County,"1,671",1671.0
+04013,2023,Arizona,Maricopa County,"1,623",1623.0
+04013,2024,Arizona,Maricopa County,"1,564",1564.0
+06037,2020,California,Los Angeles County,"2,021",2021.0
+06037,2021,California,Los Angeles County,"2,322",2322.0
+06037,2022,California,Los Angeles County,"2,440",2440.0
+06037,2023,California,Los Angeles County,"2,335",2335.0
+06037,2024,California,Los Angeles County,"1,829",1829.0
+17031,2020,Illinois,Cook County,"1,894",1894.0
+17031,2021,Illinois,Cook County,"1,996",1996.0
+17031,2022,Illinois,Cook County,"2,145",2145.0
+17031,2023,Illinois,Cook County,"1,911",1911.0
+17031,2024,Illinois,Cook County,"1,332",1332.0
+42101,2020,Pennsylvania,Philadelphia County,"1,114",1114.0
+42101,2021,Pennsylvania,Philadelphia County,"1,174",1174.0
+42101,2022,Pennsylvania,Philadelphia County,"1,273",1273.0
+42101,2023,Pennsylvania,Philadelphia County,"1,173",1173.0
+48201,2021,Texas,Harris County,"1,071",1071.0
+48201,2022,Texas,Harris County,"1,085",1085.0
+48201,2023,Texas,Harris County,"1,056",1056.0
+53033,2023,Washington,King County,"1,251",1251.0

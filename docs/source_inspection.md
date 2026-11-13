@@ -36,7 +36,7 @@ December snapshots, restricted to 2020–2024, inner-joined on common county-yea
 | Missing dispensing | 297 | 297 |
 | Missing overdose | 7,275 | 7,298 |
 
-The 23-observation discrepancy is unresolved. Source revisions or prior processing choices are hypotheses, not established explanations. The previous pandas code/source release is needed for a row-level comparison. Reproduce these local checks with `python tests/check_uploaded_sources.py <dispensing.csv> <overdose.zip>`. PySpark execution is still pending.
+The 23-observation discrepancy has been resolved as a historical pandas comma-parsing failure; see `pandas_reconciliation.md`. Legacy parsing reproduces all previous targets; comma normalization reproduces current pipeline results. Primary PySpark execution has passed locally, in CI, and in Databricks.
 
 The pipeline retains a full coverage panel for the dashboard and a separate common-key table for target comparison. Quarterly and rolling-average comparisons are implemented and locally tested; their live annual comparison SQL has run in Databricks. See `sensitivity.md` for coverage findings and separate persistence/UI deployment status.
 

@@ -106,5 +106,12 @@
       "measure_definition": "Reported provisional all-drug overdose counts for overlapping 12-month-ending periods; counts 1\u20139 suppressed.",
       "geographic_basis": "Decedent county of residence."
     }
-  ]
+  ],
+  "historical_reconciliation": {
+    "status": "Historical pandas targets reproduced; comma-normalization explains all current differences.",
+    "evidence": "analysis/pandas_notebook_evidence.json",
+    "result": "analysis/pandas_reconciliation.json",
+    "dispensing_reupload_csv_hash_matches": true,
+    "new_oversized_overdose_reupload_hash_verified": false
+  }
 }

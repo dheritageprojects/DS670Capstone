@@ -2,7 +2,7 @@
 
 Saint Peter's University graduate Data Science Capstone. Analysis period: 2020–2024. Workflow: **GitHub → Codex → Databricks → Dashboard**.
 
-The primary PySpark pipeline has run in Databricks, both dashboard pages have user-reported review, and research SQL results have been independently reproduced from frozen source snapshots. Five of eight historical targets match; three differences remain unexplained. The separate sensitivity notebook's five Delta tables still need Databricks execution evidence. The live sensitivity dashboard and research queries already work without those tables.
+The primary PySpark pipeline has run in Databricks, both dashboard pages have user-reported review, and research SQL results have been independently reproduced from frozen source snapshots. All historical targets have been reproduced; the three current differences are explained by the old pandas conversion discarding comma-formatted reported counts. The current pipeline already uses corrected parsing; see [reconciliation evidence](docs/pandas_reconciliation.md). The separate sensitivity notebook's five Delta tables still need Databricks execution evidence. The live sensitivity dashboard and research queries already work without those tables.
 
 ## Start here
 

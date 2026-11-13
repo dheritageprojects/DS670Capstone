@@ -17,7 +17,41 @@
     {
       "name": "sensitivity_live",
       "displayName": "Strict snapshot sensitivity (live source Volume)",
-      "query": "-- Read the existing source Volume; identical analytic aliases collapse before annualization.\nWITH monthly AS (\n  SELECT DISTINCT lpad(trim(FIPS), 5, '0') AS county_fips,\n    CAST(Year AS INT) AS year, CAST(Month AS INT) AS month,\n    try_cast(replace(`Provisional Drug Overdose Deaths`, ',', '') AS DOUBLE) AS deaths\n  FROM read_files('/Volumes/workspace/capstone/source_files/overdose.csv', format => 'csv', header => true)\n  WHERE CAST(Year AS INT) BETWEEN 2020 AND 2024\n), annual AS (\n  SELECT county_fips, year,\n    MAX(CASE WHEN month = 12 THEN deaths END) AS december,\n    CASE WHEN COUNT(CASE WHEN month IN (3,6,9,12) THEN deaths END) = 4\n      THEN AVG(CASE WHEN month IN (3,6,9,12) THEN deaths END) END AS quarter_end_mean_4,\n    CASE WHEN COUNT(deaths) = 12 THEN AVG(deaths) END AS monthly_mean_12,\n    CASE WHEN COUNT(CASE WHEN month IN (10,11,12) THEN deaths END) = 3\n      THEN AVG(CASE WHEN month IN (10,11,12) THEN deaths END) END AS december_trailing_mean_3\n  FROM monthly GROUP BY county_fips, year\n), methods AS (\n  SELECT county_fips, year, december AS december_count,\n    stack(4, 'december', december, 'quarter_end_mean_4', quarter_end_mean_4,\n      'monthly_mean_12', monthly_mean_12, 'december_trailing_mean_3', december_trailing_mean_3)\n      AS (method, overdose_measure)\n  FROM annual\n), joined AS (\n  SELECT m.*, b.state, b.dispensing_rate,\n    m.overdose_measure IS NOT NULL AND b.dispensing_rate IS NOT NULL AS complete_case\n  FROM methods m INNER JOIN workspace.capstone.county_year_common b\n    ON m.county_fips = b.county_fips AND m.year = b.year\n)\n-- Flags enable comparisons on identical cohorts; no counts from overlapping windows are summed.\nSELECT *,\n  SUM(CAST(complete_case AS INT)) OVER (PARTITION BY county_fips, year) = 4 AS common_within_year,\n  SUM(CAST(complete_case AS INT)) OVER (PARTITION BY county_fips) = 20 AS common_all_years\nFROM joined\n"
+      "queryLines": [
+        "-- Read the existing source Volume; identical analytic aliases collapse before annualization.\n",
+        "WITH monthly AS (\n",
+        "  SELECT DISTINCT lpad(trim(FIPS), 5, '0') AS county_fips,\n",
+        "    CAST(Year AS INT) AS year, CAST(Month AS INT) AS month,\n",
+        "    try_cast(replace(`Provisional Drug Overdose Deaths`, ',', '') AS DOUBLE) AS deaths\n",
+        "  FROM read_files('/Volumes/workspace/capstone/source_files/overdose.csv', format => 'csv', header => true)\n",
+        "  WHERE CAST(Year AS INT) BETWEEN 2020 AND 2024\n",
+        "), annual AS (\n",
+        "  SELECT county_fips, year,\n",
+        "    MAX(CASE WHEN month = 12 THEN deaths END) AS december,\n",
+        "    CASE WHEN COUNT(CASE WHEN month IN (3,6,9,12) THEN deaths END) = 4\n",
+        "      THEN AVG(CASE WHEN month IN (3,6,9,12) THEN deaths END) END AS quarter_end_mean_4,\n",
+        "    CASE WHEN COUNT(deaths) = 12 THEN AVG(deaths) END AS monthly_mean_12,\n",
+        "    CASE WHEN COUNT(CASE WHEN month IN (10,11,12) THEN deaths END) = 3\n",
+        "      THEN AVG(CASE WHEN month IN (10,11,12) THEN deaths END) END AS december_trailing_mean_3\n",
+        "  FROM monthly GROUP BY county_fips, year\n",
+        "), methods AS (\n",
+        "  SELECT county_fips, year, december AS december_count,\n",
+        "    stack(4, 'december', december, 'quarter_end_mean_4', quarter_end_mean_4,\n",
+        "      'monthly_mean_12', monthly_mean_12, 'december_trailing_mean_3', december_trailing_mean_3)\n",
+        "      AS (method, overdose_measure)\n",
+        "  FROM annual\n",
+        "), joined AS (\n",
+        "  SELECT m.*, b.state, b.dispensing_rate,\n",
+        "    m.overdose_measure IS NOT NULL AND b.dispensing_rate IS NOT NULL AS complete_case\n",
+        "  FROM methods m INNER JOIN workspace.capstone.county_year_common b\n",
+        "    ON m.county_fips = b.county_fips AND m.year = b.year\n",
+        ")\n",
+        "-- Flags enable comparisons on identical cohorts; no counts from overlapping windows are summed.\n",
+        "SELECT *,\n",
+        "  SUM(CAST(complete_case AS INT)) OVER (PARTITION BY county_fips, year) = 4 AS common_within_year,\n",
+        "  SUM(CAST(complete_case AS INT)) OVER (PARTITION BY county_fips) = 20 AS common_all_years\n",
+        "FROM joined\n"
+      ]
     }
   ],
   "pages": [
@@ -30,8 +64,8 @@
             "name": "intro",
             "multilineTextboxSpec": {
               "lines": [
-                "# U.S. Opioid Dispensing and Overdose Trends | 2020\u20132024\n",
-                "December reported 12-month-ending overdose counts; suppressed values stay missing. Counts are not population-adjusted death rates. County dispensing means are unweighted, not state/national rates. Observed death subtotals depend on reporting coverage. Association does not establish causation. County identifiers are FIPS codes. Validation differences remain unresolved."
+                "# U.S. Opioid Dispensing and Overdose Trends | 2020–2024\n",
+                "December reported 12-month-ending overdose counts; suppressed values stay missing. Counts are not population-adjusted death rates. County dispensing means are unweighted, not state/national rates. Observed death subtotals depend on reporting coverage. Association does not establish causation. County identifiers are FIPS codes. Historical validation differences are explained by the original pandas parser discarding comma-formatted counts; the current pipeline retains them."
               ]
             }
           },
@@ -737,9 +771,9 @@
               "version": 2,
               "widgetType": "table",
               "frame": {
-                "title": "Pipeline validation \u2014 not affected by dashboard filters",
+                "title": "Pipeline validation — not affected by dashboard filters",
                 "showTitle": true,
-                "description": "Differences from prior pandas targets remain under investigation.",
+                "description": "Differences are explained: the historical pandas conversion discarded 23 comma-formatted reported counts. Current values retain them; suppression remains missing.",
                 "showDescription": true
               },
               "encodings": {
@@ -777,7 +811,12 @@
         {
           "widget": {
             "name": "sensitivity_intro",
-            "textbox_spec": "# Does the annualization method change the picture?\nDecember is a reported count. Other methods are strict means of overlapping reported snapshots, not annual death estimates. Suppression in any required period makes a smoothed measure missing. Available cohorts vary by method. Shared-within-year and fixed-all-years comparisons use identical counties; fixed cohorts may overrepresent larger counties. Filters select from those precomputed cohorts. Counts are not population-adjusted; associations are ecological, not causal."
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Does the annualization method change the picture?\n",
+                "December is a reported count. Other methods are strict means of overlapping reported snapshots, not annual death estimates. Suppression in any required period makes a smoothed measure missing. Available cohorts vary by method. Shared-within-year and fixed-all-years comparisons use identical counties; fixed cohorts may overrepresent larger counties. Filters select from those precomputed cohorts. Counts are not population-adjusted; associations are ecological, not causal."
+              ]
+            }
           },
           "position": {
             "x": 0,
@@ -1142,7 +1181,7 @@
               "frame": {
                 "title": "Mean overdose measure: fixed counties across all five years",
                 "showTitle": true,
-                "description": "All four methods and dispensing available for 2020\u20132024; same cohort for every line and year.",
+                "description": "All four methods and dispensing available for 2020–2024; same cohort for every line and year.",
                 "showDescription": true
               },
               "encodings": {
@@ -1401,7 +1440,8 @@
             "height": 7
           }
         }
-      ]
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
     }
   ],
   "uiSettings": {
