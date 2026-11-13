@@ -40,4 +40,4 @@ The 23-observation discrepancy is unresolved. Source revisions or prior processi
 
 The pipeline retains a full coverage panel for the dashboard and a separate common-key table for target comparison. Quarterly and rolling-average sensitivity analyses remain pending.
 
-No uploaded data are committed to Git. Original download URLs, release dates, and source definitions remain to be documented.
+Compressed public CDC source snapshots are versioned under `sources/` for reproducible CI runs. Original download URLs, release dates, and source definitions remain to be documented.

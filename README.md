@@ -4,7 +4,7 @@ Saint Peter's University graduate Data Science Capstone. Analysis period: 2020â€
 
 ## Current status
 
-Initial dashboard-first implementation. No source data has been processed, validation targets have not been reproduced, and no dashboard has been deployed. Source URLs/files, column mappings, and authenticated Databricks access are still needed.
+Dashboard-first implementation with supplied CDC snapshots and automated local Spark/GitHub Actions checks. Source inspection reproduces five of eight prior targets; complete-case and mortality-missingness differences remain documented in `docs/source_inspection.md`. No Databricks dashboard has been deployed. Authenticated Databricks access and original CDC URLs are still needed.
 
 ## First runnable increment
 
@@ -17,3 +17,7 @@ Initial dashboard-first implementation. No source data has been processed, valid
 The initial annual measure uses December's reported 12-month-ending count. It is an overdose **count**, not a population-adjusted mortality rate. Dispensing rates retain the CDC source unit (verify prescriptions per 100 persons in the source metadata).
 
 See [data quality](docs/data_quality.md), [methods](docs/methods.md), and [architecture](docs/architecture.md). The source schemas must be confirmed before treating this pipeline as validated.
+
+## Automated execution
+
+GitHub Actions runs `.github/workflows/validate.yml` on pushes and pull requests. It executes both Python source checks and the full Spark notebook against versioned source snapshots, persisting temporary Parquet tables. See `sources/README.md` for local setup and limits. Databricks runs retain Delta as the default output format.

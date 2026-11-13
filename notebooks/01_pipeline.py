@@ -13,7 +13,7 @@ defaults = {
     'dispensing_fips': 'Location', 'dispensing_year': 'Year', 'dispensing_rate': 'Opioid Dispensing Rate',
     'overdose_fips': 'FIPS', 'overdose_year': 'Year', 'overdose_month': 'Month',
     'overdose_count': 'Provisional Drug Overdose Deaths', 'dispensing_state': 'STATE_NAME',
-    'confirmed_single_reported_series': 'false',
+    'confirmed_single_reported_series': 'false', 'output_format': 'delta',
 }
 for name, default in defaults.items():
     dbutils.widgets.text(name, default)
@@ -22,6 +22,7 @@ assert all(cfg.values()), 'Populate every widget from confirmed source metadata.
 assert cfg['confirmed_single_reported_series'].lower() == 'true', 'Confirm a single reported overdose series first.'
 assert re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*\.[A-Za-z_][A-Za-z0-9_]*', cfg['output_schema']), 'Use catalog.schema.'
 schema = cfg['output_schema']
+assert cfg['output_format'] in ('delta', 'parquet'), 'Unsupported output format.'
 
 # COMMAND ----------
 # Read original CSV values as strings to preserve suppression markers and FIPS.
@@ -103,7 +104,7 @@ display(quality)
 # COMMAND ----------
 # Persist dashboard tables only after blocking checks pass; target differences remain visible.
 spark.sql(f'CREATE SCHEMA IF NOT EXISTS {schema}')
-comparison.write.format('delta').mode('overwrite').saveAsTable(f'{schema}.county_year_common')
-panel.write.format('delta').mode('overwrite').saveAsTable(f'{schema}.county_year')
-quality.withColumn('run_timestamp', F.current_timestamp()).write.format('delta').mode('overwrite').saveAsTable(f'{schema}.quality_report')
+comparison.write.format(cfg['output_format']).mode('overwrite').saveAsTable(f'{schema}.county_year_common')
+panel.write.format(cfg['output_format']).mode('overwrite').saveAsTable(f'{schema}.county_year')
+quality.withColumn('run_timestamp', F.current_timestamp()).write.format(cfg['output_format']).mode('overwrite').saveAsTable(f'{schema}.quality_report')
 display(panel.groupBy('year').agg(F.count('*').alias('county_years'), F.sum(F.col('complete_case').cast('int')).alias('complete_cases')).orderBy('year'))
