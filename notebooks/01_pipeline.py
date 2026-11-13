@@ -10,9 +10,9 @@ from pyspark.sql import functions as F
 
 defaults = {
     'dispensing_path': '', 'overdose_path': '', 'output_schema': '',
-    'dispensing_fips': '', 'dispensing_year': '', 'dispensing_rate': '',
+    'dispensing_fips': 'Location', 'dispensing_year': 'Year', 'dispensing_rate': 'Opioid Dispensing Rate',
     'overdose_fips': '', 'overdose_year': '', 'overdose_month': '',
-    'overdose_count': '', 'dispensing_state': '',
+    'overdose_count': '', 'dispensing_state': 'STATE_NAME',
     'confirmed_single_reported_series': 'false',
 }
 for name, default in defaults.items():
@@ -33,7 +33,7 @@ for frame, names in [(disp_raw, ['dispensing_fips', 'dispensing_year', 'dispensi
 
 # COMMAND ----------
 # Parse values conservatively; expand missing tokens only after reviewing CDC metadata.
-MISSING = ['', 'suppressed', 'missing', 'na', 'n/a', 'null', '*', '**', '--']
+MISSING = ['', 'suppressed', 'missing', 'data unavailable', 'na', 'n/a', 'null', '*', '**', '--']
 def source_col(name):
     return F.col('`' + cfg[name].replace('`', '``') + '`')
 
