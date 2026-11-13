@@ -24,7 +24,7 @@ python3.12 -m venv .venv
 .venv/bin/python tests/run_pipeline.py
 ```
 
-GitHub Actions runs these checks plus syntax checks. Local Spark uses temporary Parquet tables; Databricks notebooks default to Delta. Source ZIPs and their compressed/uncompressed checksums are recorded in [the manifest](sources/manifest.json). Original CDC download URLs/releases remain incomplete.
+GitHub Actions runs these checks plus syntax checks. Local Spark uses temporary Parquet tables; Databricks notebooks default to Delta. Source ZIPs and their compressed/uncompressed checksums are recorded in [the manifest](sources/manifest.json). [Verified CDC citations and definitions](docs/source_citations.md) document source-estimated dispensing rates and the prescriber-versus-resident geography mismatch. CDC source landing pages are verified; exact export/download and snapshot release history remain incomplete.
 
 ## Databricks and dashboard
 

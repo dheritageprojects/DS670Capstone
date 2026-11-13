@@ -22,4 +22,4 @@ for source in manifest['sources']:
     assert reader.fieldnames==source['columns'], source['id']
     assert sum(1 for _ in reader)==source['raw_rows'], source['id']
     print(f"PASS: {source['id']} archive, CSV, schema, and raw row count verified.")
-print('Original CDC URLs and release provenance remain incomplete; hash verification does not establish them.')
+print('CDC source pages are identified; exact original export/download and uploaded-release provenance remain incomplete. Hash verification does not establish them.')

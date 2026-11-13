@@ -16,7 +16,7 @@ Legend: **Done** = implemented with stated evidence; **Partial** = implemented b
 | Investigate December, quarterly, rolling approaches | Partial | December, quarter-end means, monthly means, and trailing-three means implemented and compared. Live annual comparison SQL verified; full monthly/quarterly PySpark outputs tested locally. Their five Delta output tables still need notebook execution/readback in Databricks. |
 | Never sum overlapping 12-month-ending counts | Done | Snapshot selection and AVG used across windows. Sums of observed counts are across counties for a selected annual measure, or across non-overlapping calendar years when explicitly selected in the original dashboard; neither constructs annual deaths from monthly windows. |
 | Never zero-fill suppression | Done | Missing measures and coverage flags retained; zero preservation tested. |
-| Distinguish reported and derived/imputed values | Done | December classified as reported; smoothing classified as derived means, not annual death estimates; no imputation. |
+| Distinguish reported and derived/imputed values | Done | December classified as reported; smoothing classified as derived means, not annual death estimates; no analyst imputation. CDC dispensing rates are explicitly identified as source estimates. |
 | Validate integrated county-year data | Partial | Structural and numeric checks pass; five of eight historical targets match. Three differences remain unexplained, so historical replication is incomplete. |
 | Interactive dashboard | Done | Existing two-page draft with user-reported acceptance/review. No independent browser acceptance test; publication is separate. |
 | Pipeline architecture diagram | Done | Mermaid architecture in `architecture.md`. No exported image required or fabricated. |
@@ -70,15 +70,19 @@ No tolerance was pre-agreed that makes the differences acceptable. Source revisi
 |---|---|---|
 | Working Databricks primary pipeline | Done | Primary outputs verified; capture managed runtime/job details for stronger handoff evidence. |
 | Working interactive dashboard | Done | User-reviewed draft. Confirm final audience and publication if required; no claim it is published. |
-| Reproducible code | Partial | Frozen snapshots, checksums, CI, exact queries/results and runbook available. Original CDC URLs/releases and managed runtime metadata remain missing. CI dependency is pinned but not a full lockfile. |
+| Reproducible code | Partial | Frozen snapshots, checksums, CI, exact queries/results and runbook available. Exact export/download and snapshot release history and managed runtime metadata remain missing. CI dependency is pinned but not a full lockfile. |
 | Data-quality documentation | Done | Structural checks, coverage, suppression, aliases, geography, target differences documented. Full resolution of discrepancies remains open. |
 | Pipeline diagram | Done | Mermaid source updated for current architecture. |
-| Final capstone report | Partial | Draft in `capstone_report.md`, based on verified findings. Needs student/course/advisor details, source citations, rubric alignment, and academic review. |
+| Final capstone report | Partial | Draft in `capstone_report.md`, based on verified findings. Verified CDC source citations added; still needs student/course/advisor details, exact snapshot release history, citation-style/rubric alignment, and academic review. |
 | Presentation | Open | No slide deck requested or created in this increment. |
 
 ## Recommended closeout order
 
 1. Run and read back `02_sensitivity.py` on Databricks Delta; retain execution evidence.
-2. Supply original CDC download URLs/releases and previous pandas implementation, then reconcile or formally document benchmark differences.
+2. Supply exact export/download and snapshot release history plus the previous pandas implementation, then reconcile or formally document benchmark differences.
 3. Review the report draft and add university-required front matter, citations, and formatting.
 4. Decide dashboard audience/publication and prepare the final presentation if required.
+
+## Source documentation update
+
+The user supplied both CDC source pages, verified November 13, 2026. Publication titles, dispensing units/source-estimation basis, prescriber-versus-resident geography, mortality windows, suppression rules, and mortality dataset ID are now documented in `source_citations.md`. Source landing-page identification is complete. Exact original export/download and uploaded-release provenance remain open. These links do not explain the historical 23-observation discrepancy.

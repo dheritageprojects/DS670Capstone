@@ -2,7 +2,7 @@
 
 ## What this reproduces
 
-The supplied CDC snapshots, primary 2020–2024 county-year pipeline, strict annualization comparisons, descriptive research outputs, and a two-page Databricks dashboard. Source identity is recorded in `sources/manifest.json`; the original CDC URLs and release documentation remain incomplete. GitHub Actions success demonstrates local Spark execution and reference agreement, not Databricks permissions or browser rendering.
+The supplied CDC snapshots, primary 2020–2024 county-year pipeline, strict annualization comparisons, descriptive research outputs, and a two-page Databricks dashboard. Source identity is recorded in `sources/manifest.json`; CDC source landing pages/definitions are verified in `source_citations.md`; exact original exports/download dates and release correspondence remain incomplete. GitHub Actions success demonstrates local Spark execution and reference agreement, not Databricks permissions or browser rendering.
 
 ## Software and access
 
@@ -51,4 +51,4 @@ The initial `dashboard/build_dashboard.py` builds only the original baseline pag
 - Live sensitivity coverage query: verified in Databricks; source observations exported in `docs/sensitivity_coverage.csv`.
 - Original dashboard/filter behavior: explicit user confirmation. Sensitivity page: user reported review, with no failure reported; no independent browser test or screenshot is claimed.
 - Research: full provider-result exports plus independent source calculations and automated tests.
-- Still required: original CDC URLs/release metadata; previous pandas code or release for the 23-observation discrepancy; executed sensitivity Delta-table evidence; final report author/course/advisor details and rubric; publication/audience decision.
+- Still required: exact original export/download and uploaded-release metadata; previous pandas code or release for the 23-observation discrepancy; executed sensitivity Delta-table evidence; final report author/course/advisor details and rubric; publication/audience decision.

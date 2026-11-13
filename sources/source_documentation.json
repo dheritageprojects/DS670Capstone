@@ -1,0 +1,39 @@
+{
+  "verified_on": "2026-11-13",
+  "dispensing": {
+    "url": "https://www.cdc.gov/overdose-prevention/data-research/facts-stats/opioid-dispensing-rate-maps.html",
+    "title": "Opioid Dispensing Rate Maps",
+    "content_source": "National Center for Injury Prevention and Control",
+    "page_updated": "2026-08-11",
+    "source": "IQVIA Xponent 2019\u20132024",
+    "definition": "Projected annual opioid prescription totals / annual resident population \u00d7 100",
+    "geography": "Prescriber location",
+    "coverage": "Approximately 54,600 retail non-hospital pharmacies, nearly 94% of retail prescriptions; county maps represent approximately 98% of counties per year.",
+    "exclusions": [
+      "Mail-order prescriptions",
+      "Methadone dispensed through methadone treatment programs"
+    ],
+    "provenance_limit": "Page update date does not establish uploaded export release."
+  },
+  "overdose": {
+    "url": "https://data.cdc.gov/National-Center-for-Health-Statistics/VSRR-Provisional-County-Level-Drug-Overdose-Death-/gb4e-yj24/about_data",
+    "metadata_endpoint": "https://data.cdc.gov/api/views/gb4e-yj24.json",
+    "title": "VSRR Provisional County-Level Drug Overdose Death Counts",
+    "dataset_id": "gb4e-yj24",
+    "publisher": "National Center for Health Statistics",
+    "geography": "Decedent county of residence",
+    "window_definition": "Deaths in 12 months ending in indicated month; June 2020 covers July 1, 2019\u2013June 30, 2020.",
+    "suppression": "Counts 1\u20139 suppressed",
+    "icd10_underlying_cause": [
+      "X40\u2013X44",
+      "X60\u2013X64",
+      "X85",
+      "Y10\u2013Y14"
+    ],
+    "doi": "https://doi.org/10.15620/cdc/20250305009",
+    "portal_temporal_applicability": "2020-01-01/2026-10-04",
+    "portal_rows_updated_utc": "2026-10-14T14:04:20+00:00",
+    "suggested_citation_text": "Ahmad FB, Anderson RN, Cisewski JA, Rossen LM, Sutton P. County-level provisional drug overdose death counts. National Center for Health Statistics. [year]. DOI: https://dx.doi.org/10.15620/cdc/20250305009",
+    "provenance_limit": "Live metadata extends beyond the uploaded 2020\u20132025 file; it is not a release identifier for that file."
+  }
+}

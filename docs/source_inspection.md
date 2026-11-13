@@ -40,4 +40,4 @@ The 23-observation discrepancy is unresolved. Source revisions or prior processi
 
 The pipeline retains a full coverage panel for the dashboard and a separate common-key table for target comparison. Quarterly and rolling-average comparisons are implemented and locally tested; their live annual comparison SQL has run in Databricks. See `sensitivity.md` for coverage findings and separate persistence/UI deployment status.
 
-Compressed public CDC source snapshots are versioned under `sources/` for reproducible CI runs. Original download URLs, release dates, and source definitions remain to be documented.
+Compressed public CDC source snapshots are versioned under `sources/` for reproducible CI runs. CDC source landing pages and definitions are documented in `source_citations.md`; exact original export/download dates and file release identity remain unresolved.

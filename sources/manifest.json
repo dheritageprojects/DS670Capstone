@@ -9,9 +9,10 @@
   ],
   "provenance_complete": false,
   "notes": [
-    "Source titles are supplied descriptions, not verified formal publication citations.",
+    "Titles as supplied are preserved; verified publication titles and source landing pages are recorded separately.",
     "Data as of is preserved verbatim; do not infer original download date or resolve its date format without source metadata.",
-    "Never replace these snapshots with newly downloaded releases merely to match historical validation targets."
+    "Never replace these snapshots with newly downloaded releases merely to match historical validation targets.",
+    "Source landing pages supplied by user and verified 2026-11-13; exact original exports/download dates and correspondence to current portal releases remain unverified."
   ],
   "sources": [
     {
@@ -46,7 +47,13 @@
         "Location",
         "Opioid Dispensing Rate",
         "Opioid Dispensing Rate (per 100 persons)"
-      ]
+      ],
+      "source_landing_url": "https://www.cdc.gov/overdose-prevention/data-research/facts-stats/opioid-dispensing-rate-maps.html",
+      "source_documentation_verified_on": "2026-11-13",
+      "verified_publication_title": "Opioid Dispensing Rate Maps",
+      "source_page_updated": "2026-08-11",
+      "measure_definition": "Estimated opioid prescriptions per 100 persons per year; projected retail prescription totals divided by resident population.",
+      "geographic_basis": "Location of prescriber, not necessarily patient residence."
     },
     {
       "id": "overdose",
@@ -91,7 +98,13 @@
         "MonthEndingDate",
         "Start Date",
         "End Date"
-      ]
+      ],
+      "source_landing_url": "https://data.cdc.gov/National-Center-for-Health-Statistics/VSRR-Provisional-County-Level-Drug-Overdose-Death-/gb4e-yj24/about_data",
+      "source_documentation_verified_on": "2026-11-13",
+      "verified_publication_title": "VSRR Provisional County-Level Drug Overdose Death Counts",
+      "socrata_dataset_id": "gb4e-yj24",
+      "measure_definition": "Reported provisional all-drug overdose counts for overlapping 12-month-ending periods; counts 1\u20139 suppressed.",
+      "geographic_basis": "Decedent county of residence."
     }
   ]
 }

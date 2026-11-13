@@ -3,7 +3,7 @@
 **Graduate Data Science Capstone — Report Draft**  
 Saint Peter's University  
 Author, course, advisor, and submission date: **to be supplied**  
-Status: research draft for academic review; source citations and final formatting are incomplete.
+Status: research draft for academic review; source pages are verified; exact uploaded-release history, citation-style review, and final formatting remain incomplete.
 
 ## Abstract
 
@@ -23,14 +23,14 @@ The mortality measure is all-drug overdose, not a measure attributable exclusive
 
 ## 2. Data and study scope
 
-The source descriptions supplied for the project are CDC county-level dispensing rates, 2019–2024 [1], and provisional county-level overdose deaths, 2020–2025 [2]. The common analysis period is 2020–2024. Source titles in this draft are descriptive, not complete bibliographic citations. Original download URLs, download dates, and formal release identifiers remain unknown. The mortality CSV contains `Data as of` text `07/05/2026`; it is preserved verbatim and is not treated as a download date.
+The source descriptions supplied for the project are CDC county-level dispensing rates, 2019–2024 [1], and provisional county-level overdose deaths, 2020–2025 [2]. The common analysis period is 2020–2024. The CDC source pages and publication titles have been verified; citations appear in Section 8 and `docs/source_citations.md`. Exact original export/download URLs, download dates, and identifiers tying the uploads to particular releases remain unknown. The mortality CSV contains `Data as of` text `07/05/2026`; it is preserved verbatim and is not treated as a download date.
 
 | Source | Core fields used | Important interpretation |
 |---|---|---|
-| Dispensing [1] | Location, Year, STATE_NAME, Opioid Dispensing Rate | Numeric county rate; the similarly named display-bin column is not used as a numeric measure. Source documentation should confirm the per-100-person unit in the final citation. |
+| Dispensing [1] | Location, Year, STATE_NAME, Opioid Dispensing Rate | Numeric county rate; the similarly named display-bin column is not used as a numeric measure. CDC confirms estimated projected retail prescriptions per 100 residents, geographically attributed to prescriber location. |
 | Overdose [2] | FIPS, Year, Month, Provisional Drug Overdose Deaths | Reported provisional 12-month-ending counts; blank cells with suppression footnotes remain missing. Literal zeros remain zero. |
 
-The dispensing snapshot has 3,144 distinct county FIPS. The overdose snapshot has 3,142 distinct FIPS, with two Virginia name-alias pairs sharing FIPS and identical analytic observations. The common county set includes 3,142 FIPS; dispensing-only FIPS 02063 and 02066 are retained in the full dashboard coverage panel but excluded from common-key research comparisons. No geographic reassignment or historical boundary crosswalk is applied. The state-year summaries cover the 50 states and District of Columbia.
+The dispensing snapshot has 3,144 distinct county FIPS. The overdose snapshot has 3,142 distinct FIPS, with two Virginia name-alias pairs sharing FIPS and identical analytic observations. The common county set includes 3,142 FIPS; dispensing-only FIPS 02063 and 02066 are retained in the full dashboard coverage panel but excluded from common-key research comparisons. No geographic reassignment or historical boundary crosswalk is applied. The state-year summaries cover the 50 states and District of Columbia. CDC dispensing rates are source estimates from projected totals, and their geography follows prescriber location. Mortality follows decedent residence. Therefore FIPS matching does not establish identical exposure/residence geography. The project adds no analyst imputation; smoothed mortality values are separately labeled derived measures.
 
 ## 3. Pipeline and reproducibility
 
@@ -133,9 +133,10 @@ This is a ranking of missingness, not overdose risk. High missingness limits geo
 
 ## 6. Limitations and unresolved issues
 
+- Geographic attribution differs: CDC dispensing uses prescriber location, while mortality uses decedent county of residence. FIPS matching does not eliminate this mismatch. Dispensing excludes mail-order prescriptions and methadone dispensed through treatment programs; see `source_citations.md`.
 - All results are ecological. Legally dispensed opioids must not be described as causing deaths in the all-drug mortality dataset, which includes drugs obtained through legal and illegal channels.
 - Overdose measures are counts, not population-adjusted death rates. Pearson and Spearman are unadjusted descriptive associations; no demographic, socioeconomic, or population confounders are controlled.
-- Provisional deaths can be revised. Source release versions and geographic conventions affect reproducibility. The original CDC download URLs and complete provenance remain to be supplied.
+- Provisional deaths can be revised. Source release versions and geographic conventions affect reproducibility. CDC source landing pages and definitions are verified in `source_citations.md`. Exact export/download dates and correspondence to a specific source release remain unresolved.
 - Suppression is not random. Strict smoothing drops more county-years and the 865-county fixed cohort can favor larger, consistently reporting counties. No uncertainty interval for suppressed counts is estimated.
 - The four methods summarize overlapping 12-month-ending snapshots with different temporal support. Comparing endpoint changes is sensitivity analysis, not four alternative estimates of calendar-year deaths.
 - The historical targets still differ: 8,203 versus 8,180 complete observations, 2,388 versus 2,385 complete-case counties, and 7,275 versus 7,298 missing overdose observations. The cause is unresolved; the previous pandas code/source release is needed for reconciliation.
@@ -149,13 +150,15 @@ Dispensing decreased in the fixed cohort, while the interpretation of overdose e
 
 The project delivers a functioning primary pipeline, user-reviewed interactive dashboard, reproducible descriptive analyses, and explicit limitations. It supports cautious exploration of county-level patterns, not attribution of all-drug overdose deaths to legal opioid dispensing. Further modeling would need a separately justified design and potentially population data; neither is assumed necessary or completed here.
 
-Before submission, complete provenance, reconcile or formally explain benchmark discrepancies, execute/read back the remaining sensitivity Delta tables, add author/course/advisor details and university-required citations/formatting, and obtain academic review. Dashboard publication and presentation creation remain separate decisions.
+Before submission, complete the uploaded-release/export provenance, reconcile or formally explain benchmark discrepancies, execute/read back the remaining sensitivity Delta tables, add author/course/advisor details and university-required citations/formatting, and obtain academic review. Dashboard publication and presentation creation remain separate decisions.
 
 ## 8. Data references and project artifacts
 
-[1] Centers for Disease Control and Prevention. County-level opioid dispensing data, 2019–2024. Supplied file `opioid_dispensing_2026_update.csv`; exact formal title, original URL, release identifier, and access date pending. Archived as `sources/dispensing.csv.zip`; hashes and schema in `sources/manifest.json`.
+[1] Centers for Disease Control and Prevention. (2026, August 11). *Opioid dispensing rate maps*. National Center for Injury Prevention and Control. https://www.cdc.gov/overdose-prevention/data-research/facts-stats/opioid-dispensing-rate-maps.html
 
-[2] Centers for Disease Control and Prevention. Provisional county-level drug overdose death data, 2020–2025. Supplied file `overdose_deaths_2026_update.csv` in ZIP; exact formal title, original URL, release identifier, and access date pending. Archived as `sources/overdose.csv.zip`; hashes and schema in `sources/manifest.json`.
+[2] National Center for Health Statistics. (n.d.). *VSRR provisional county-level drug overdose death counts* [Data set; Socrata ID gb4e-yj24]. Centers for Disease Control and Prevention. Retrieved November 13, 2026, from https://data.cdc.gov/National-Center-for-Health-Statistics/VSRR-Provisional-County-Level-Drug-Overdose-Death-/gb4e-yj24/about_data. Publisher-metadata DOI: https://doi.org/10.15620/cdc/20250305009
+
+The mortality publisher metadata provides a suggested author citation with a `[year]` placeholder; the undated organizational citation avoids guessing a release year. Exact original export/download dates and release identity for both supplied files remain unresolved. The live portal extends beyond the uploaded mortality snapshot. See `docs/source_citations.md` for definitions and citation qualifications; preserve the frozen source hashes.
 
 Project code: https://github.com/dheritageprojects/DS670Capstone
 

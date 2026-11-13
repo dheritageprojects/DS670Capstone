@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-These descriptive results come from executed, read-only Databricks SQL, exported in full as `analysis/associations_results.csv` (60 rows) and `analysis/geographic_results.csv` (255 rows). The state-year data cover the 50 states and District of Columbia. Independent standard-library calculations from the supplied source ZIPs reproduce every exported numeric summary within floating-point tolerance (1e-10). No new dataset, population denominator, imputation, significance test, or causal model is introduced.
+These descriptive results come from executed, read-only Databricks SQL, exported in full as `analysis/associations_results.csv` (60 rows) and `analysis/geographic_results.csv` (255 rows). The state-year data cover the 50 states and District of Columbia. Independent standard-library calculations from the supplied source ZIPs reproduce every exported numeric summary within floating-point tolerance (1e-10). No new dataset, population denominator, analyst imputation, significance test, or causal model is introduced. CDC dispensing rates themselves are source estimates based on projected retail prescription totals; this is distinct from analyst-created smoothing of reported overdose counts.
 
 The primary common-key panel has 15,710 county-years. Correlations use complete dispensing–overdose pairs, separately within each year. Available cohorts vary by year/method; shared-within-year cohorts hold counties constant across methods in a year; the fixed cohort contains 865 counties with all measures and dispensing available throughout all five years. The fixed cohort is a selected subset and is not representative by design.
 
@@ -65,9 +65,10 @@ This is a ranking of missingness, not overdose risk. High missingness limits geo
 
 ## Limitations and unresolved issues
 
+- Geographic attribution differs: CDC dispensing uses prescriber location, while mortality uses decedent county of residence. FIPS matching does not eliminate this mismatch. Dispensing excludes mail-order prescriptions and methadone dispensed through treatment programs; see `source_citations.md`.
 - All results are ecological. Legally dispensed opioids must not be described as causing deaths in the all-drug mortality dataset, which includes drugs obtained through legal and illegal channels.
 - Overdose measures are counts, not population-adjusted death rates. Pearson and Spearman are unadjusted descriptive associations; no demographic, socioeconomic, or population confounders are controlled.
-- Provisional deaths can be revised. Source release versions and geographic conventions affect reproducibility. The original CDC download URLs and complete provenance remain to be supplied.
+- Provisional deaths can be revised. Source release versions and geographic conventions affect reproducibility. CDC source landing pages and definitions are verified in `source_citations.md`. Exact export/download dates and correspondence to a specific source release remain unresolved.
 - Suppression is not random. Strict smoothing drops more county-years and the 865-county fixed cohort can favor larger, consistently reporting counties. No uncertainty interval for suppressed counts is estimated.
 - The four methods summarize overlapping 12-month-ending snapshots with different temporal support. Comparing endpoint changes is sensitivity analysis, not four alternative estimates of calendar-year deaths.
 - The historical targets still differ: 8,203 versus 8,180 complete observations, 2,388 versus 2,385 complete-case counties, and 7,275 versus 7,298 missing overdose observations. The cause is unresolved; the previous pandas code/source release is needed for reconciliation.
