@@ -1,0 +1,759 @@
+{
+  "datasets": [
+    {
+      "name": "county_panel",
+      "displayName": "County-year coverage panel",
+      "query": "SELECT *, CAST(missing_dispensing AS INT) AS missing_dispensing_n, CAST(missing_overdose AS INT) AS missing_overdose_n FROM workspace.capstone.county_year"
+    },
+    {
+      "name": "quality",
+      "displayName": "Unfiltered pipeline validation",
+      "query": "SELECT * FROM workspace.capstone.quality_report"
+    }
+  ],
+  "pages": [
+    {
+      "name": "overview",
+      "displayName": "County trends and coverage",
+      "layout": [
+        {
+          "widget": {
+            "name": "intro",
+            "textbox_spec": "# U.S. Opioid Dispensing and Overdose Trends | 2020\u20132024\nDecember reported 12-month-ending overdose counts; suppressed values stay missing. Counts are not population-adjusted death rates. County dispensing means are unweighted, not state/national rates. Observed death subtotals depend on reporting coverage. Association does not establish causation. County identifiers are FIPS codes. Validation differences remain unresolved."
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_year",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "frame": {
+                "title": "Year",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "year",
+                    "queryName": "main_query"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_state",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "state",
+                      "expression": "`state`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "frame": {
+                "title": "State",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "state",
+                    "queryName": "main_query"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_county_fips",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "county_fips",
+                      "expression": "`county_fips`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "frame": {
+                "title": "County FIPS",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "county_fips",
+                    "queryName": "main_query"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "dispensing_trend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "mean_dispensing",
+                      "expression": "AVG(`dispensing_rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "frame": {
+                "title": "Mean county dispensing rate per 100 persons",
+                "showTitle": true,
+                "description": "Unweighted mean among counties with reported dispensing.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "mean_dispensing",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "overdose_trend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "observed_deaths",
+                      "expression": "SUM(`overdose_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "frame": {
+                "title": "Reported overdose deaths: observed-county subtotal",
+                "showTitle": true,
+                "description": "Coverage varies; do not interpret as national totals.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "observed_deaths",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 5,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "reporting_coverage",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "reporting_counties",
+                      "expression": "COUNT(`overdose_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "frame": {
+                "title": "County-years with reported overdose counts",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "reporting_counties",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "missing_overdose",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "missing_counties",
+                      "expression": "SUM(`missing_overdose_n`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "frame": {
+                "title": "County-years missing overdose counts",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "missing_counties",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 10,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "state_dispensing",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "state",
+                      "expression": "`state`"
+                    },
+                    {
+                      "name": "mean_dispensing",
+                      "expression": "AVG(`dispensing_rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "frame": {
+                "title": "State comparison: mean county dispensing",
+                "showTitle": true,
+                "description": "Unweighted county mean; use state filter to focus.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "state",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "mean_dispensing",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 15,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "state_overdose",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "state",
+                      "expression": "`state`"
+                    },
+                    {
+                      "name": "observed_deaths",
+                      "expression": "SUM(`overdose_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "frame": {
+                "title": "State comparison: reported overdose subtotal",
+                "showTitle": true,
+                "description": "Across selected years; excludes missing counties.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "state",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "observed_deaths",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 15,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "association",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "county_fips",
+                      "expression": "`county_fips`"
+                    },
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "state",
+                      "expression": "`state`"
+                    },
+                    {
+                      "name": "dispensing_rate",
+                      "expression": "CASE WHEN `complete_case` THEN `dispensing_rate` END"
+                    },
+                    {
+                      "name": "overdose_count",
+                      "expression": "CASE WHEN `complete_case` THEN `overdose_count` END"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "scatter",
+              "frame": {
+                "title": "Dispensing vs reported overdose count",
+                "showTitle": true,
+                "description": "Complete observations only; count depends on population. No causal interpretation.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "dispensing_rate",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "overdose_count",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 20,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "missing_dispensing",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "missing_counties",
+                      "expression": "SUM(`missing_dispensing_n`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "frame": {
+                "title": "County-years missing dispensing rates",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "missing_counties",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 20,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "county_details",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "county_panel",
+                  "fields": [
+                    {
+                      "name": "state",
+                      "expression": "`state`"
+                    },
+                    {
+                      "name": "county_fips",
+                      "expression": "`county_fips`"
+                    },
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "dispensing_rate",
+                      "expression": "`dispensing_rate`"
+                    },
+                    {
+                      "name": "overdose_count",
+                      "expression": "`overdose_count`"
+                    },
+                    {
+                      "name": "missing_dispensing",
+                      "expression": "`missing_dispensing`"
+                    },
+                    {
+                      "name": "missing_overdose",
+                      "expression": "`missing_overdose`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "frame": {
+                "title": "County-year details",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "state"
+                  },
+                  {
+                    "fieldName": "county_fips"
+                  },
+                  {
+                    "fieldName": "year"
+                  },
+                  {
+                    "fieldName": "dispensing_rate"
+                  },
+                  {
+                    "fieldName": "overdose_count"
+                  },
+                  {
+                    "fieldName": "missing_dispensing"
+                  },
+                  {
+                    "fieldName": "missing_overdose"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 25,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "quality_report",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "quality",
+                  "fields": [
+                    {
+                      "name": "metric",
+                      "expression": "`metric`"
+                    },
+                    {
+                      "name": "actual",
+                      "expression": "`actual`"
+                    },
+                    {
+                      "name": "target",
+                      "expression": "`target`"
+                    },
+                    {
+                      "name": "difference",
+                      "expression": "`difference`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "frame": {
+                "title": "Pipeline validation \u2014 not affected by dashboard filters",
+                "showTitle": true,
+                "description": "Differences from prior pandas targets remain under investigation.",
+                "showDescription": true
+              },
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "metric"
+                  },
+                  {
+                    "fieldName": "actual"
+                  },
+                  {
+                    "fieldName": "target"
+                  },
+                  {
+                    "fieldName": "difference"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 32,
+            "width": 6,
+            "height": 5
+          }
+        }
+      ]
+    }
+  ]
+}
