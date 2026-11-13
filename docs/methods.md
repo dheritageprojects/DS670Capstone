@@ -12,6 +12,6 @@ County associations are ecological and do not establish individual risk or causa
 
 Provisional mortality values may be revised or incomplete. Freeze and document source releases. Retain only the reported series; predicted values, if supplied by CDC, require a distinct column and explicit labeling. No imputation or estimation is performed here. Complete-case analysis can systematically exclude small counties with suppressed counts. Display missingness alongside substantive charts.
 
-## Outstanding source decisions
+## Verified mappings and remaining source questions
 
-Confirm exact columns, FIPS conventions, calendar month encoding, suppression tokens, dispensing units, drug indicator, geographic scope, and any demographic/series dimensions. Confirm whether the previous pandas implementation used December and whether its merged panel used the same county universe. Target counts alone cannot determine these choices.
+Uploaded-file column mappings, numeric months, FIPS normalization, suppression blanks, display bins, and name-alias pairs have been inspected; see `source_inspection.md`. Formal CDC source documentation is still needed to complete publication provenance and verify source definitions/units. The previous pandas implementation is needed to compare its month selection, release, and county-universe rules. Target counts alone cannot establish those choices.

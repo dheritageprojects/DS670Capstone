@@ -1,0 +1,97 @@
+{
+  "manifest_version": 1,
+  "analysis_years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024
+  ],
+  "provenance_complete": false,
+  "notes": [
+    "Source titles are supplied descriptions, not verified formal publication citations.",
+    "Data as of is preserved verbatim; do not infer original download date or resolve its date format without source metadata.",
+    "Never replace these snapshots with newly downloaded releases merely to match historical validation targets."
+  ],
+  "sources": [
+    {
+      "id": "dispensing",
+      "title_as_supplied": "CDC county-level opioid dispensing rates",
+      "acquisition": "User-uploaded CSV or ZIP; compressed snapshot versioned in GitHub",
+      "original_download_url": null,
+      "original_download_date": null,
+      "source_release_identifier": null,
+      "data_as_of_text": null,
+      "source_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024
+      ],
+      "raw_rows": 18864,
+      "archive_path": "sources/dispensing.csv.zip",
+      "archive_bytes": 161431,
+      "archive_sha256": "318321ffbd7bd94d3267e78194e8213674f3c98601c86e427346f2c9a5249e37",
+      "csv_member": "dispensing.csv",
+      "csv_bytes": 1315145,
+      "csv_sha256": "8cd88e062cab18e28d7ec7baa85f77c392c4e29665fb2cc35878c80023608f4d",
+      "columns": [
+        "FullGeoName",
+        "Year",
+        "STATE_NAME",
+        "STATE_ABBREV",
+        "COUNTY_NAME",
+        "Location",
+        "Opioid Dispensing Rate",
+        "Opioid Dispensing Rate (per 100 persons)"
+      ]
+    },
+    {
+      "id": "overdose",
+      "title_as_supplied": "CDC provisional county-level drug overdose deaths",
+      "acquisition": "User-uploaded CSV or ZIP; compressed snapshot versioned in GitHub",
+      "original_download_url": null,
+      "original_download_date": null,
+      "source_release_identifier": null,
+      "data_as_of_text": [
+        "07/05/2026"
+      ],
+      "source_years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "raw_rows": 226368,
+      "archive_path": "sources/overdose.csv.zip",
+      "archive_bytes": 1498410,
+      "archive_sha256": "c0b8ffa29fa39ab74ba0d4caa3b5ebc0b4a58b48e22fe9e95b611ccc1d4e1a1b",
+      "csv_member": "overdose_deaths_2026_update.csv",
+      "csv_bytes": 43712981,
+      "csv_sha256": "cf2838a9fdfa1cb3ece345927abe8a1a029cd66729999436d289de21baa945c1",
+      "columns": [
+        "Data as of",
+        "Year",
+        "Month",
+        "ST_ABBREV",
+        "STATE_NAME",
+        "COUNTYNAME",
+        "FIPS",
+        "STATEFIPS",
+        "COUNTYFIPS",
+        "CODE2013",
+        "Provisional Drug Overdose Deaths",
+        "Footnote",
+        "Percentage Of Records Pending Investigation",
+        "HistoricalDataCompletenessNote",
+        "MonthEndingDate",
+        "Start Date",
+        "End Date"
+      ]
+    }
+  ]
+}

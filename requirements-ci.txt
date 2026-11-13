@@ -1,0 +1,2 @@
+# Direct runtime dependency for local and GitHub Actions Spark validation.
+pyspark==4.0.1

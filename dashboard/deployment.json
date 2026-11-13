@@ -4,5 +4,5 @@
   "workspace_id": "7474646615740609",
   "status": "draft",
   "warehouse_id": "661de5cfcddc30d5",
-  "verification": "Original dashboard/filter acceptance confirmed by user. Sensitivity page saved as draft; its SQL coverage query ran in Databricks. New page rendering and filter acceptance pending."
+  "verification": "Original page/filter acceptance explicitly confirmed by user. User subsequently reported review of sensitivity page; no failure reported. SQL verified through Databricks; no independent browser test or publication readback."
 }

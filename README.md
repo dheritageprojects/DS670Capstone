@@ -1,27 +1,35 @@
 # U.S. Opioid Dispensing and Overdose Trends
 
-Saint Peter's University graduate Data Science Capstone. Analysis period: 2020–2024.
+Saint Peter's University graduate Data Science Capstone. Analysis period: 2020–2024. Workflow: **GitHub → Codex → Databricks → Dashboard**.
 
-## Current status
+The primary PySpark pipeline has run in Databricks, both dashboard pages have user-reported review, and research SQL results have been independently reproduced from frozen source snapshots. Five of eight historical targets match; three differences remain unexplained. The separate sensitivity notebook's five Delta tables still need Databricks execution evidence. The live sensitivity dashboard and research queries already work without those tables.
 
-Dashboard-first implementation with supplied CDC snapshots and automated local Spark/GitHub Actions checks. Source inspection reproduces five of eight prior targets; complete-case and mortality-missingness differences remain documented in `docs/source_inspection.md`. Primary tables are deployed in Databricks and the user confirmed the original dashboard and filters work. Sensitivity comparisons are implemented separately; see `docs/sensitivity.md`. Original CDC URLs are still needed.
+## Start here
 
-## First runnable increment
+- [Reproduction and handoff guide](docs/reproducibility.md): clean-checkout checks, Databricks execution order, access, pins, and known gaps.
+- [Requirements audit](docs/requirements_audit.md): requirement-by-requirement evidence and remaining submission work.
+- [Capstone report draft](docs/capstone_report.md): methods, verified findings, limitations, and incomplete data references.
+- [Research findings](docs/research_findings.md): focused numerical results and query evidence.
+- [Architecture](docs/architecture.md), [quality](docs/data_quality.md), [source inspection](docs/source_inspection.md), and [sensitivity methods](docs/sensitivity.md).
 
-1. Place the two CDC CSV files in a Databricks Unity Catalog Volume.
-2. Import `notebooks/01_pipeline.py` into Databricks Free Edition as a Python notebook.
-3. Set the widgets to source paths, exact column names, and a writable schema. The overdose source must be restricted to one documented, all-drug, all-population county monthly series before running. Do not mix drug categories or demographic strata.
-4. Run the notebook. Resolve duplicate keys or invalid values before continuing; do not silently drop them.
-5. Use the resulting `county_year` table in a Databricks AI/BI dashboard following `dashboard/README.md`.
+## Reproduce the checks
 
-The initial annual measure uses December's reported 12-month-ending count. It is an overdose **count**, not a population-adjusted mortality rate. Dispensing rates retain the CDC source unit (verify prescriptions per 100 persons in the source metadata).
+With Python 3.12 and Java 21, from the repository root:
 
-See [data quality](docs/data_quality.md), [methods](docs/methods.md), and [architecture](docs/architecture.md). The source schemas must be confirmed before treating this pipeline as validated.
+```bash
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements-ci.txt
+.venv/bin/python sources/verify_manifest.py
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py'
+.venv/bin/python tests/run_pipeline.py
+```
 
-## Automated execution
+GitHub Actions runs these checks plus syntax checks. Local Spark uses temporary Parquet tables; Databricks notebooks default to Delta. Source ZIPs and their compressed/uncompressed checksums are recorded in [the manifest](sources/manifest.json). Original CDC download URLs/releases remain incomplete.
 
-GitHub Actions runs `.github/workflows/validate.yml` on pushes and pull requests. It executes both Python source checks and the full Spark notebook against versioned source snapshots, persisting temporary Parquet tables. See `sources/README.md` for local setup and limits. Databricks runs retain Delta as the default output format.
+## Databricks and dashboard
 
-## Research findings
+Import `notebooks/00_databricks_setup.py` and Run all for primary setup. It downloads checksum-verified artifacts from a pinned historical commit, creates the source Volume, and runs the primary pipeline. Separately import/run the current `notebooks/02_sensitivity.py` for the five sensitivity output tables. See the runbook before rerunning: project source files and output tables are overwritten, and a failed multi-table run can leave mixed-generation outputs.
 
-See [research findings](docs/research_findings.md) for executed Databricks associations, cohort trends, geographic coverage, and limitations. Reproducible queries and full exports are in `analysis/`. All result rows are independently checked against the supplied source snapshots.
+[Open the existing dashboard draft](https://dbc-dc957048-d7f2.cloud.databricks.com/sql/dashboardsv3/01f1df0509d010f987459df183dcdd91?o=7474646615740609). Its original page uses the full coverage panel; the sensitivity page uses read-only Volume SQL and the common-key panel. The saved multi-page definition is `dashboard/opioid_trends.lvdash.json`. Publication/audience status must be checked separately from functional review.
+
+Reported overdose counts are not mortality rates. Suppression remains missing; overlapping monthly windows are never summed into annual deaths. Smoothed values are derived snapshot means, not imputed annual counts. County dispensing means are unweighted, not national/state dispensing rates. All associations are descriptive and do not establish causation.
