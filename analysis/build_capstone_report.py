@@ -63,9 +63,9 @@ Processing stages are:
 7. Compute strict annualization comparisons, explicit cohorts, and descriptive research summaries.
 8. Save query evidence and build the dashboard with coverage and interpretation notes.
 
-The architecture diagram is in `docs/architecture.md`. Primary tables have executed successfully in Databricks and have been queried. The separate sensitivity PySpark notebook has been exercised with local Spark/Parquet; its five additional Delta output tables still require Databricks execution evidence. The sensitivity dashboard and research SQL already run directly against the source Volume and primary tables and do not depend on those unexecuted Delta tables.
+The architecture diagram is in `docs/architecture.md`. Primary tables have executed successfully in Databricks and have been queried. The sensitivity PySpark notebook has run on Databricks; all five output tables are confirmed as Delta. Complete source/window comparisons and independent checks of 60 summaries and 20 paired comparisons passed; see `docs/sensitivity_verification.md`. The live sensitivity dashboard and research SQL also work directly against the source Volume and primary tables.
 
-Local/CI verification uses Python 3.12, Java 21, and PySpark 4.0.1. Snapshot hashes and the primary bootstrap's historical artifact pin make source/code identity explicit. The exact managed Databricks runtime version was not recorded. GitHub Actions validates source hashes, Python syntax, Spark execution, suppression/calendar logic, statistical reference calculations, and all exported research summaries. It does not prove Unity Catalog permissions, Delta behavior for the pending tables, or browser rendering. User-reported dashboard acceptance is recorded separately.
+Local/CI verification uses Python 3.12, Java 21, and PySpark 4.0.1. Snapshot hashes and the primary bootstrap's historical artifact pin make source/code identity explicit. The exact managed Databricks runtime version was not recorded. GitHub Actions validates source hashes, Python syntax, Spark execution, suppression/calendar logic, statistical reference calculations, and all exported research summaries. CI alone does not prove live Unity Catalog permissions, Delta execution, or browser rendering. Delta execution/readback has now been separately verified in Databricks. User-reported dashboard acceptance is recorded separately.
 
 ## 4. Analytical methods
 
@@ -98,7 +98,7 @@ Dispensing decreased in the fixed cohort, while the interpretation of overdose e
 
 The project delivers a functioning primary pipeline, user-reviewed interactive dashboard, reproducible descriptive analyses, and explicit limitations. It supports cautious exploration of county-level patterns, not attribution of all-drug overdose deaths to legal opioid dispensing. Further modeling would need a separately justified design and potentially population data; neither is assumed necessary or completed here.
 
-Before submission, complete the uploaded-release/export provenance, retain the documented historical parsing reconciliation, execute/read back the remaining sensitivity Delta tables, add author/course/advisor details and university-required citations/formatting, and obtain academic review. Dashboard publication and presentation creation remain separate decisions.
+Before submission, complete the uploaded-release/export provenance, retain the documented historical parsing reconciliation, retain the completed sensitivity Delta-table readback evidence, add author/course/advisor details and university-required citations/formatting, and obtain academic review. Dashboard publication and presentation creation remain separate decisions.
 
 ## 8. Data references and project artifacts
 

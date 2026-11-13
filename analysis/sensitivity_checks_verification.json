@@ -1,0 +1,85 @@
+{
+  "conversation_id": "7523063dc5f746e29f110cef31fc884a",
+  "response_id": "074d59249e0b4c468c3f84f192a2b2c3",
+  "item_id": "pub_toolu_bdrk_01VCH4n4T5TprW5U9ZcLcajf_output",
+  "statement_state": "SUCCEEDED",
+  "ready": true,
+  "columns": [
+    {
+      "name": "check_name",
+      "type_text": "STRING"
+    },
+    {
+      "name": "value",
+      "type_text": "BIGINT"
+    }
+  ],
+  "rows": [
+    [
+      "annual_duplicate_keys",
+      "0"
+    ],
+    [
+      "annual_incomplete_window_nonnull",
+      "0"
+    ],
+    [
+      "annual_key_or_value_mismatches",
+      "0"
+    ],
+    [
+      "paired_duplicate_keys",
+      "0"
+    ],
+    [
+      "quarterly_duplicate_keys",
+      "0"
+    ],
+    [
+      "quarterly_invalid_month_or_quarter",
+      "0"
+    ],
+    [
+      "rolling_duplicate_keys",
+      "0"
+    ],
+    [
+      "rolling_incomplete_window_nonnull",
+      "0"
+    ],
+    [
+      "rolling_initial_boundary_nonnull",
+      "0"
+    ],
+    [
+      "rows_overdose_quarterly",
+      "62840"
+    ],
+    [
+      "rows_overdose_rolling3",
+      "188520"
+    ],
+    [
+      "rows_sensitivity_county_year",
+      "62840"
+    ],
+    [
+      "rows_sensitivity_paired",
+      "20"
+    ],
+    [
+      "rows_sensitivity_summary",
+      "60"
+    ],
+    [
+      "summary_duplicate_keys",
+      "0"
+    ],
+    [
+      "unexpected_imputation_flag",
+      "0"
+    ]
+  ],
+  "total_row_count": 16,
+  "truncated": false
+}

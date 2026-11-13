@@ -1,0 +1,29 @@
+{
+  "conversation_id": "5fca41fa5ed844e6b4e5b52c133fa688",
+  "response_id": "2d8fedec6f59415e8e8cb4abfeb0c632",
+  "item_id": "pub_toolu_bdrk_018ctssj5EgGs6RtNyhwGs5H_output",
+  "statement_state": "SUCCEEDED",
+  "ready": true,
+  "columns": [
+    {
+      "name": "check_name",
+      "type_text": "STRING"
+    },
+    {
+      "name": "value",
+      "type_text": "BIGINT"
+    }
+  ],
+  "rows": [
+    [
+      "quarterly_source_mismatches",
+      "0"
+    ],
+    [
+      "rolling_source_or_window_mismatches",
+      "0"
+    ]
+  ],
+  "total_row_count": 2,
+  "truncated": false
+}

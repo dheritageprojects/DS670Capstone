@@ -13,7 +13,7 @@ Legend: **Done** = implemented with stated evidence; **Partial** = implemented b
 | Description before each code section | Done | Notebook sections and analysis stages have explanatory comments/Markdown. No formal style linter enforces this. |
 | Five-character FIPS strings | Done | Normalization and invalid-key checks implemented. Geography differences and alias duplicates documented. |
 | Suppressed overdose values remain missing | Done | Source blank/suppression handling, strict-window rules, and independent reference tests; literal reported zeros preserved. |
-| Investigate December, quarterly, rolling approaches | Partial | December, quarter-end means, monthly means, and trailing-three means implemented and compared. Live annual comparison SQL verified; full monthly/quarterly PySpark outputs tested locally. Their five Delta output tables still need notebook execution/readback in Databricks. |
+| Investigate December, quarterly, rolling approaches | Done | All methods implemented and compared. All five sensitivity outputs are Delta in Databricks; source/window parity and independently calculated summary/paired results pass. See `sensitivity_verification.md`. |
 | Never sum overlapping 12-month-ending counts | Done | Snapshot selection and AVG used across windows. Sums of observed counts are across counties for a selected annual measure, or across non-overlapping calendar years when explicitly selected in the original dashboard; neither constructs annual deaths from monthly windows. |
 | Never zero-fill suppression | Done | Missing measures and coverage flags retained; zero preservation tested. |
 | Distinguish reported and derived/imputed values | Done | December classified as reported; smoothing classified as derived means, not annual death estimates; no analyst imputation. CDC dispensing rates are explicitly identified as source estimates. |
@@ -33,7 +33,7 @@ Legend: **Done** = implemented with stated evidence; **Partial** = implemented b
 | Dispensing–overdose relationships | Done | Original scatter plot; research additionally provides Pearson/Spearman by year/cohort/method. |
 | Missing-data patterns | Done | Original missingness charts; sensitivity coverage and missingness comparisons. |
 | Year, state, county filters | Done | Original filters explicitly confirmed by user. Sensitivity filters were added and the user reported reviewing that page; no individual automated filter assertions. |
-| Annualization sensitivity | Done | Additional draft page; live SQL query results verified and reviewed by user. Full persisted sensitivity outputs are a separate remaining deployment step. |
+| Annualization sensitivity | Done | Additional draft page; live SQL query results verified and reviewed by user. All five persisted sensitivity outputs are now verified in Databricks. |
 
 ## Research questions and safeguards
 
@@ -78,7 +78,7 @@ All historical targets are now reproduced using the original parsing behavior. T
 
 ## Recommended closeout order
 
-1. Run and read back `02_sensitivity.py` on Databricks Delta; retain execution evidence.
+1. Completed: `02_sensitivity.py` Delta execution/readback is verified; retain evidence and refresh checks after any changes.
 2. Supply exact export/download and snapshot release history; retain the completed pandas reconciliation and verify the new oversized CSV via ZIP if byte identity is required.
 3. Review the report draft and add university-required front matter, citations, and formatting.
 4. Decide dashboard audience/publication and prepare the final presentation if required.

@@ -1,0 +1,41 @@
+{
+  "conversation_id": "7523063dc5f746e29f110cef31fc884a",
+  "response_id": "074d59249e0b4c468c3f84f192a2b2c3",
+  "item_id": "pub_toolu_bdrk_01GEugDfszi1UoSMEDomLbzy_output",
+  "statement_state": "SUCCEEDED",
+  "ready": true,
+  "columns": [
+    {
+      "name": "table_name",
+      "type_text": "STRING"
+    },
+    {
+      "name": "data_source_format",
+      "type_text": "STRING"
+    }
+  ],
+  "rows": [
+    [
+      "overdose_quarterly",
+      "DELTA"
+    ],
+    [
+      "overdose_rolling3",
+      "DELTA"
+    ],
+    [
+      "sensitivity_county_year",
+      "DELTA"
+    ],
+    [
+      "sensitivity_paired",
+      "DELTA"
+    ],
+    [
+      "sensitivity_summary",
+      "DELTA"
+    ]
+  ],
+  "total_row_count": 5,
+  "truncated": false
+}
