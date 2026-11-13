@@ -5,3 +5,5 @@ The user confirmed that the original Databricks dashboard loads and that its yea
 Dashboard ID: `01f1df0509d010f987459df183dcdd91`.
 
 This confirmation applies to the original dashboard only. New sensitivity views require separate execution and acceptance. Publication status has not been verified; do not infer publication from functional filters.
+
+The user subsequently confirmed review of the Annualization sensitivity page ("I've checked"). This is recorded as user-reported review, not an automated visual test. No specific rendering or filter failure was reported.

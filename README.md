@@ -21,3 +21,7 @@ See [data quality](docs/data_quality.md), [methods](docs/methods.md), and [archi
 ## Automated execution
 
 GitHub Actions runs `.github/workflows/validate.yml` on pushes and pull requests. It executes both Python source checks and the full Spark notebook against versioned source snapshots, persisting temporary Parquet tables. See `sources/README.md` for local setup and limits. Databricks runs retain Delta as the default output format.
+
+## Research findings
+
+See [research findings](docs/research_findings.md) for executed Databricks associations, cohort trends, geographic coverage, and limitations. Reproducible queries and full exports are in `analysis/`. All result rows are independently checked against the supplied source snapshots.
