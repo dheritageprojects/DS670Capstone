@@ -11,8 +11,8 @@ from pyspark.sql import functions as F
 defaults = {
     'dispensing_path': '', 'overdose_path': '', 'output_schema': '',
     'dispensing_fips': 'Location', 'dispensing_year': 'Year', 'dispensing_rate': 'Opioid Dispensing Rate',
-    'overdose_fips': '', 'overdose_year': '', 'overdose_month': '',
-    'overdose_count': '', 'dispensing_state': 'STATE_NAME',
+    'overdose_fips': 'FIPS', 'overdose_year': 'Year', 'overdose_month': 'Month',
+    'overdose_count': 'Provisional Drug Overdose Deaths', 'dispensing_state': 'STATE_NAME',
     'confirmed_single_reported_series': 'false',
 }
 for name, default in defaults.items():
@@ -69,6 +69,9 @@ for frame, measure in [(disp, 'dispensing_rate'), (over, 'overdose_count')]:
     unknown = F.col('value_raw').isNotNull() & ~F.lower(F.trim(F.col('value_raw'))).isin(MISSING) & F.col(measure).isNull()
     assert_empty(frame.filter(unknown), 'Unrecognized value token: review metadata, never coerce blindly.')
 assert_empty(over.filter(F.col('month').isNull() | ~F.col('month').between(1, 12)), 'Months must be numeric 1–12; adapt mapping explicitly if needed.')
+# Collapse identical analytic records only; conflicting measures still fail the key check.
+# Source inspection found 144 alias pairs differing only in COUNTYNAME.
+over = over.dropDuplicates()
 disp = disp.filter(F.col('year').between(2020, 2024))
 over = over.filter(F.col('year').between(2020, 2024))
 for frame, keys in [(disp, ['county_fips', 'year']), (over, ['county_fips', 'year', 'month'])]:
@@ -87,9 +90,12 @@ assert_empty(panel.groupBy('county_fips', 'year').count().filter('count > 1'), '
 
 # COMMAND ----------
 # Compare computed metrics against prior pandas targets without changing observations.
-complete = panel.filter('complete_case')
+# Compare prior merge targets on common county-year keys; retain full panel for coverage.
+common_keys = disp.select('county_fips', 'year').join(annual.select('county_fips', 'year'), ['county_fips', 'year'], 'inner')
+comparison = panel.join(common_keys, ['county_fips', 'year'], 'inner')
+complete = comparison.filter('complete_case')
 matching = disp.select('county_fips').distinct().join(over.select('county_fips').distinct(), 'county_fips', 'inner').count()
-actual = [disp_raw.count(), over_raw.count(), matching, panel.count(), complete.count(), complete.select('county_fips').distinct().count(), panel.filter('missing_dispensing').count(), panel.filter('missing_overdose').count()]
+actual = [disp_raw.count(), over_raw.count(), matching, comparison.count(), complete.count(), complete.select('county_fips').distinct().count(), comparison.filter('missing_dispensing').count(), comparison.filter('missing_overdose').count()]
 targets = [('raw_dispensing', 18864), ('raw_overdose', 226368), ('matching_fips', 3142), ('merged_county_years', 15710), ('complete_observations', 8180), ('complete_counties', 2385), ('missing_dispensing', 297), ('missing_overdose', 7298)]
 quality = spark.createDataFrame([(name, value, target, value - target) for (name, target), value in zip(targets, actual)], 'metric string, actual long, target long, difference long')
 display(quality)
@@ -97,6 +103,7 @@ display(quality)
 # COMMAND ----------
 # Persist dashboard tables only after blocking checks pass; target differences remain visible.
 spark.sql(f'CREATE SCHEMA IF NOT EXISTS {schema}')
+comparison.write.format('delta').mode('overwrite').saveAsTable(f'{schema}.county_year_common')
 panel.write.format('delta').mode('overwrite').saveAsTable(f'{schema}.county_year')
 quality.withColumn('run_timestamp', F.current_timestamp()).write.format('delta').mode('overwrite').saveAsTable(f'{schema}.quality_report')
 display(panel.groupBy('year').agg(F.count('*').alias('county_years'), F.sum(F.col('complete_case').cast('int')).alias('complete_cases')).orderBy('year'))

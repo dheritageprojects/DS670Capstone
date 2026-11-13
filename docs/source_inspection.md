@@ -21,6 +21,23 @@ The raw row count matches the prior target. The standalone analysis-period data 
 
 ## Overdose: overdose_deaths_2026_update.csv
 
-Inspection blocked: the uploaded file exceeds the download tool's 32 MiB transfer limit. No rows, columns, or mortality results have been verified. Supply a compressed copy or direct download URL to continue.
+Inspected the supplied ZIP containing one 43,712,981-byte CSV. Raw records: 226,368; years 2020–2025; 3,142 unique FIPS. `Data as of` is `07/05/2026` in every record (preserved as source text). `FIPS` needs zero-padding; `Year` and `Month` are numeric strings. The measure is `Provisional Drug Overdose Deaths`. Blank values carry an explicit suppression footnote; literal zero is a reported zero and remains zero.
+
+There are 144 duplicate county-month key groups across the full file: FIPS 51005 (Alleghany / Clifton Forge city) and 51019 (Bedford / Bedford city), each over 72 months. All source columns except COUNTYNAME agree within each group. Collapse these identical analytic observations; never sum them. Chugach (02063) and Copper River (02066) appear only in dispensing. No geographic crosswalk or reassignment is attempted.
+
+December snapshots, restricted to 2020–2024, inner-joined on common county-year keys yield:
+
+| Metric | Actual | Prior target |
+|---|---:|---:|
+| Matching counties | 3,142 | 3,142 |
+| Merged county-years | 15,710 | 15,710 |
+| Complete observations | 8,203 | 8,180 |
+| Complete-case counties | 2,388 | 2,385 |
+| Missing dispensing | 297 | 297 |
+| Missing overdose | 7,275 | 7,298 |
+
+The 23-observation discrepancy is unresolved. Source revisions or prior processing choices are hypotheses, not established explanations. The previous pandas code/source release is needed for a row-level comparison. Reproduce these local checks with `python tests/check_uploaded_sources.py <dispensing.csv> <overdose.zip>`. PySpark execution is still pending.
+
+The pipeline retains a full coverage panel for the dashboard and a separate common-key table for target comparison. Quarterly and rolling-average sensitivity analyses remain pending.
 
 No uploaded data are committed to Git. Original download URLs, release dates, and source definitions remain to be documented.
