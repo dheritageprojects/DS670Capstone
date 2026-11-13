@@ -4,7 +4,7 @@ Saint Peter's University graduate Data Science Capstone. Analysis period: 2020â€
 
 ## Current status
 
-Dashboard-first implementation with supplied CDC snapshots and automated local Spark/GitHub Actions checks. Source inspection reproduces five of eight prior targets; complete-case and mortality-missingness differences remain documented in `docs/source_inspection.md`. No Databricks dashboard has been deployed. Authenticated Databricks access and original CDC URLs are still needed.
+Dashboard-first implementation with supplied CDC snapshots and automated local Spark/GitHub Actions checks. Source inspection reproduces five of eight prior targets; complete-case and mortality-missingness differences remain documented in `docs/source_inspection.md`. Primary tables are deployed in Databricks and the user confirmed the original dashboard and filters work. Sensitivity comparisons are implemented separately; see `docs/sensitivity.md`. Original CDC URLs are still needed.
 
 ## First runnable increment
 

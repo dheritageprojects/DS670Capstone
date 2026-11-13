@@ -4,7 +4,7 @@
 
 The first dashboard uses December observations of reported 12-month-ending overdose deaths, aligned to annual dispensing for 2020–2024. December values can be missing or suppressed. Preserve them as null; do not substitute another month without labeling a separate method.
 
-Quarterly sensitivity analysis should sample March, June, September, and December as separate 12-month-ending snapshots. A rolling approach can average these reported monthly snapshots to describe smoothed burden, but cannot represent annual deaths. Never sum overlapping windows. These sensitivity outputs are planned, not yet implemented. Compare them using consistent county coverage and report how suppression affects coverage.
+Quarterly sensitivity analysis should sample March, June, September, and December as separate 12-month-ending snapshots. A rolling approach can average these reported monthly snapshots to describe smoothed burden, but cannot represent annual deaths. Never sum overlapping windows. These sensitivity outputs are implemented in `notebooks/02_sensitivity.py`; see `docs/sensitivity.md` for strict-window rules and cohort comparisons. Databricks execution of that notebook remains a separate deployment step. Compare them using consistent county coverage and report how suppression affects coverage.
 
 ## Interpretation
 

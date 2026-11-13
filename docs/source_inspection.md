@@ -38,6 +38,6 @@ December snapshots, restricted to 2020–2024, inner-joined on common county-yea
 
 The 23-observation discrepancy is unresolved. Source revisions or prior processing choices are hypotheses, not established explanations. The previous pandas code/source release is needed for a row-level comparison. Reproduce these local checks with `python tests/check_uploaded_sources.py <dispensing.csv> <overdose.zip>`. PySpark execution is still pending.
 
-The pipeline retains a full coverage panel for the dashboard and a separate common-key table for target comparison. Quarterly and rolling-average sensitivity analyses remain pending.
+The pipeline retains a full coverage panel for the dashboard and a separate common-key table for target comparison. Quarterly and rolling-average comparisons are implemented and locally tested; their live annual comparison SQL has run in Databricks. See `sensitivity.md` for coverage findings and separate persistence/UI deployment status.
 
 Compressed public CDC source snapshots are versioned under `sources/` for reproducible CI runs. Original download URLs, release dates, and source definitions remain to be documented.

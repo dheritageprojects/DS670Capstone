@@ -55,5 +55,11 @@ with tempfile.TemporaryDirectory(prefix='capstone-') as temporary:
         quality = spark.table('spark_catalog.capstone.quality_report')
         assert quality.count() == 8
         print('PASS: source checks, full notebook execution, and persisted-table checks.')
+
+        # Execute and independently verify the sensitivity notebook on the same real source snapshot.
+        runpy.run_path(str(root / 'notebooks/02_sensitivity.py'), init_globals={'spark': spark, 'dbutils': SimpleNamespace(widgets=Widgets()), 'display': lambda frame: frame.show(60, truncate=False)})
+        from check_sensitivity import check_sensitivity
+        check_sensitivity(spark, paths['overdose'], paths['dispensing'], 'spark_catalog.capstone')
+
     finally:
         spark.stop()

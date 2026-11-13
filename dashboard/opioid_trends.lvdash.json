@@ -3,12 +3,21 @@
     {
       "name": "county_panel",
       "displayName": "County-year coverage panel",
-      "query": "SELECT *, CAST(missing_dispensing AS INT) AS missing_dispensing_n, CAST(missing_overdose AS INT) AS missing_overdose_n FROM workspace.capstone.county_year"
+      "queryLines": [
+        "SELECT *, CAST(missing_dispensing AS INT) AS missing_dispensing_n, CAST(missing_overdose AS INT) AS missing_overdose_n FROM workspace.capstone.county_year"
+      ]
     },
     {
       "name": "quality",
       "displayName": "Unfiltered pipeline validation",
-      "query": "SELECT * FROM workspace.capstone.quality_report"
+      "queryLines": [
+        "SELECT * FROM workspace.capstone.quality_report"
+      ]
+    },
+    {
+      "name": "sensitivity_live",
+      "displayName": "Strict snapshot sensitivity (live source Volume)",
+      "query": "-- Read the existing source Volume; identical analytic aliases collapse before annualization.\nWITH monthly AS (\n  SELECT DISTINCT lpad(trim(FIPS), 5, '0') AS county_fips,\n    CAST(Year AS INT) AS year, CAST(Month AS INT) AS month,\n    try_cast(replace(`Provisional Drug Overdose Deaths`, ',', '') AS DOUBLE) AS deaths\n  FROM read_files('/Volumes/workspace/capstone/source_files/overdose.csv', format => 'csv', header => true)\n  WHERE CAST(Year AS INT) BETWEEN 2020 AND 2024\n), annual AS (\n  SELECT county_fips, year,\n    MAX(CASE WHEN month = 12 THEN deaths END) AS december,\n    CASE WHEN COUNT(CASE WHEN month IN (3,6,9,12) THEN deaths END) = 4\n      THEN AVG(CASE WHEN month IN (3,6,9,12) THEN deaths END) END AS quarter_end_mean_4,\n    CASE WHEN COUNT(deaths) = 12 THEN AVG(deaths) END AS monthly_mean_12,\n    CASE WHEN COUNT(CASE WHEN month IN (10,11,12) THEN deaths END) = 3\n      THEN AVG(CASE WHEN month IN (10,11,12) THEN deaths END) END AS december_trailing_mean_3\n  FROM monthly GROUP BY county_fips, year\n), methods AS (\n  SELECT county_fips, year, december AS december_count,\n    stack(4, 'december', december, 'quarter_end_mean_4', quarter_end_mean_4,\n      'monthly_mean_12', monthly_mean_12, 'december_trailing_mean_3', december_trailing_mean_3)\n      AS (method, overdose_measure)\n  FROM annual\n), joined AS (\n  SELECT m.*, b.state, b.dispensing_rate,\n    m.overdose_measure IS NOT NULL AND b.dispensing_rate IS NOT NULL AS complete_case\n  FROM methods m INNER JOIN workspace.capstone.county_year_common b\n    ON m.county_fips = b.county_fips AND m.year = b.year\n)\n-- Flags enable comparisons on identical cohorts; no counts from overlapping windows are summed.\nSELECT *,\n  SUM(CAST(complete_case AS INT)) OVER (PARTITION BY county_fips, year) = 4 AS common_within_year,\n  SUM(CAST(complete_case AS INT)) OVER (PARTITION BY county_fips) = 20 AS common_all_years\nFROM joined\n"
     }
   ],
   "pages": [
@@ -19,7 +28,12 @@
         {
           "widget": {
             "name": "intro",
-            "textbox_spec": "# U.S. Opioid Dispensing and Overdose Trends | 2020\u20132024\nDecember reported 12-month-ending overdose counts; suppressed values stay missing. Counts are not population-adjusted death rates. County dispensing means are unweighted, not state/national rates. Observed death subtotals depend on reporting coverage. Association does not establish causation. County identifiers are FIPS codes. Validation differences remain unresolved."
+            "multilineTextboxSpec": {
+              "lines": [
+                "# U.S. Opioid Dispensing and Overdose Trends | 2020\u20132024\n",
+                "December reported 12-month-ending overdose counts; suppressed values stay missing. Counts are not population-adjusted death rates. County dispensing means are unweighted, not state/national rates. Observed death subtotals depend on reporting coverage. Association does not establish causation. County identifiers are FIPS codes. Validation differences remain unresolved."
+              ]
+            }
           },
           "position": {
             "x": 0,
@@ -753,7 +767,647 @@
             "height": 5
           }
         }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "name": "annualization_sensitivity",
+      "displayName": "Annualization sensitivity",
+      "layout": [
+        {
+          "widget": {
+            "name": "sensitivity_intro",
+            "textbox_spec": "# Does the annualization method change the picture?\nDecember is a reported count. Other methods are strict means of overlapping reported snapshots, not annual death estimates. Suppression in any required period makes a smoothed measure missing. Available cohorts vary by method. Shared-within-year and fixed-all-years comparisons use identical counties; fixed cohorts may overrepresent larger counties. Filters select from those precomputed cohorts. Counts are not population-adjusted; associations are ecological, not causal."
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_filter_year",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "frame": {
+                "title": "Year",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "year",
+                    "queryName": "main_query"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_filter_state",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "state",
+                      "expression": "`state`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "frame": {
+                "title": "State",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "state",
+                    "queryName": "main_query"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 4,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_filter_county_fips",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "county_fips",
+                      "expression": "`county_fips`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "frame": {
+                "title": "County FIPS",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "county_fips",
+                    "queryName": "main_query"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 4,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_coverage",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "method",
+                      "expression": "`method`"
+                    },
+                    {
+                      "name": "value",
+                      "expression": "SUM(CAST(`complete_case` AS INT))"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "frame": {
+                "title": "Complete county-years by method",
+                "showTitle": true,
+                "description": "Requires both dispensing and the overdose measure; strict smoothing may reduce coverage.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "method",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_available_means",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "method",
+                      "expression": "`method`"
+                    },
+                    {
+                      "name": "value",
+                      "expression": "AVG(CASE WHEN `complete_case` THEN `overdose_measure` END)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "frame": {
+                "title": "Mean overdose measure: available complete cases",
+                "showTitle": true,
+                "description": "Unweighted means on method-specific county cohorts; differences may reflect selection.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "method",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 6,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_shared_means",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "method",
+                      "expression": "`method`"
+                    },
+                    {
+                      "name": "value",
+                      "expression": "AVG(CASE WHEN `common_within_year` THEN `overdose_measure` END)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "frame": {
+                "title": "Mean overdose measure: shared counties within each year",
+                "showTitle": true,
+                "description": "All four methods and dispensing available; county membership can change between years.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "method",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_fixed_means",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "method",
+                      "expression": "`method`"
+                    },
+                    {
+                      "name": "value",
+                      "expression": "AVG(CASE WHEN `common_all_years` THEN `overdose_measure` END)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "frame": {
+                "title": "Mean overdose measure: fixed counties across all five years",
+                "showTitle": true,
+                "description": "All four methods and dispensing available for 2020\u20132024; same cohort for every line and year.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "method",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 11,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_differences",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "method",
+                      "expression": "`method`"
+                    },
+                    {
+                      "name": "value",
+                      "expression": "AVG(CASE WHEN `complete_case` AND `december_count` IS NOT NULL THEN `overdose_measure` - `december_count` END)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "frame": {
+                "title": "Paired mean difference from December",
+                "showTitle": true,
+                "description": "Pairs use identical county-years within each method; paired cohorts differ between methods.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "method",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_missing",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "method",
+                      "expression": "`method`"
+                    },
+                    {
+                      "name": "value",
+                      "expression": "SUM(CASE WHEN `overdose_measure` IS NULL THEN 1 ELSE 0 END)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "frame": {
+                "title": "Missing overdose measures by method",
+                "showTitle": true,
+                "description": "Includes strict-window missingness; no suppressed count is zero-filled.",
+                "showDescription": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "method",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 16,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_details",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity_live",
+                  "fields": [
+                    {
+                      "name": "state",
+                      "expression": "`state`"
+                    },
+                    {
+                      "name": "county_fips",
+                      "expression": "`county_fips`"
+                    },
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "method",
+                      "expression": "`method`"
+                    },
+                    {
+                      "name": "overdose_measure",
+                      "expression": "`overdose_measure`"
+                    },
+                    {
+                      "name": "dispensing_rate",
+                      "expression": "`dispensing_rate`"
+                    },
+                    {
+                      "name": "complete_case",
+                      "expression": "`complete_case`"
+                    },
+                    {
+                      "name": "common_within_year",
+                      "expression": "`common_within_year`"
+                    },
+                    {
+                      "name": "common_all_years",
+                      "expression": "`common_all_years`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "frame": {
+                "title": "Sensitivity county-year details",
+                "showTitle": true,
+                "description": "",
+                "showDescription": false
+              },
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "state"
+                  },
+                  {
+                    "fieldName": "county_fips"
+                  },
+                  {
+                    "fieldName": "year"
+                  },
+                  {
+                    "fieldName": "method"
+                  },
+                  {
+                    "fieldName": "overdose_measure"
+                  },
+                  {
+                    "fieldName": "dispensing_rate"
+                  },
+                  {
+                    "fieldName": "complete_case"
+                  },
+                  {
+                    "fieldName": "common_within_year"
+                  },
+                  {
+                    "fieldName": "common_all_years"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 21,
+            "width": 6,
+            "height": 7
+          }
+        }
       ]
     }
-  ]
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
 }
