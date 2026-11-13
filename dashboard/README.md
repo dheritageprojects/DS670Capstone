@@ -1,26 +1,24 @@
-# First Databricks AI/BI dashboard
+# Databricks AI/BI dashboard
 
-Create a dashboard after the notebook passes its checks. Add a dataset with `SELECT * FROM <catalog>.<schema>.county_year` using your actual schema. Add year, state, and county FIPS filters to that dataset. FIPS is the initial county label until source names are confirmed. Do not label counts as death rates.
+[Open the existing dashboard draft](https://dbc-dc957048-d7f2.cloud.databricks.com/sql/dashboardsv3/01f1df0509d010f987459df183dcdd91?o=7474646615740609).
 
-| View | Configuration |
-|---|---|
-| Dispensing trend | Year vs mean dispensing rate; show observed county count |
-| Overdose trend | Year vs sum reported December counts; label as observed-county subtotal and display reporting coverage |
-| Geographic comparison | State bar chart of mean dispensing and reported overdose subtotal; county comparison table |
-| Association | Scatter: dispensing rate vs reported overdose count, one county-year per point; complete cases only |
-| Missingness | Year/state vs missing dispensing and missing overdose counts, with total county-years |
-| County details | Year, state, FIPS, both measures, and missingness flags |
+The original page and year/state/county filters were explicitly confirmed working by the user. The user subsequently reported reviewing the sensitivity page, with no failure reported. This is user-reported acceptance/review, not an automated browser test or a fabricated screenshot. The last saved asset was a draft; publication/audience still needs a separate decision and readback.
 
-Unweighted mean county dispensing rates are not statewide or national dispensing rates. Overdose subtotals exclude missing/suppressed counties and vary with coverage. Show coverage beside trends; do not present changes in these subtotals as changes in national totals. A county map requires confirmed geographic support; no boundary dataset has been added.
+## Pages and data
 
-Before publishing, verify each filter changes all intended charts, nulls remain missing, tooltips show measure units, and sparse selections do not imply zero deaths. Dashboard creation and these acceptance checks remain pending Databricks authentication and real data.
+| Page | Data | Views |
+|---|---|---|
+| County trends and coverage | `workspace.capstone.county_year`, `quality_report` | Dispensing/overdose trends, reporting coverage, state comparisons, scatter plot, missingness, county details, unfiltered validation report |
+| Annualization sensitivity | `sensitivity_dataset.sql`: source Volume plus `county_year_common` | Four method comparisons, complete coverage, available/shared/fixed cohort means, paired differences, missingness, detail table |
 
-## Created draft
+Each page has year, state, and county FIPS controls for its analytical dataset. The quality-report dataset remains unfiltered. County labels are FIPS identifiers. State bars and county details satisfy descriptive geography; no county map, boundary dataset, or spatial inference has been added.
 
-[Open the Databricks dashboard draft](https://dbc-dc957048-d7f2.cloud.databricks.com/sql/dashboardsv3/01f1df0509d010f987459df183dcdd91?o=7474646615740609).
+## Reproduction and safeguards
 
-The draft was created successfully against `workspace.capstone.county_year` and `workspace.capstone.quality_report`. Rebuild its source JSON with `python dashboard/build_dashboard.py`. Dashboard creation validates the saved definition, not rendered results or filter behavior. No SQL warehouse ID was available through the connector, so select a warehouse in the dashboard before running it if prompted. It is not published. UI acceptance checks above remain pending. The main dashboard uses the full coverage panel (including dispensing-only counties); historical target comparisons use the separate common-key panel.
+The current complete definition is `opioid_trends.lvdash.json`; deployment identifiers and last-known warehouse are in `deployment.json`. Prefer the existing asset over duplicate creation. `build_dashboard.py` recreates only the original baseline and would omit later additions if used as a replacement. `build_sensitivity.py` appends a page to a freshly exported baseline and refuses one that already contains it. Read a current draft and preserve user edits/etag before updating.
 
-## Sensitivity update
+Source selection is deliberate: the original dashboard uses the full coverage panel, including dispensing-only county keys. Research and sensitivity use common-key observations. Historical target differences are displayed, not hidden. The live sensitivity dataset does not require the separate five sensitivity Delta tables; their Databricks notebook execution remains pending.
 
-The original page and its filters have been confirmed working by the user. The draft now also contains **Annualization sensitivity**, built by `build_sensitivity.py` from a freshly exported original draft. Its live source SQL has executed successfully in Databricks. See `docs/sensitivity.md` for definitions, verified coverage, and limitations. Rendering and filters on the new page need separate acceptance. `build_dashboard.py` builds only the original baseline; do not use its output to replace the current multi-page dashboard. The saved `opioid_trends.lvdash.json` contains both pages.
+Unweighted county dispensing means are not statewide/national dispensing rates. Reported overdose subtotals omit missing counties and vary with coverage; they are not national totals or population-adjusted death rates. No suppressed value is zero-filled. Smoothing averages overlapping snapshots and is not an estimate of annual deaths. The sensitivity page labels these definitions and cohort restrictions explicitly.
+
+After any update, recheck charts, nulls, units, filter propagation, sparse selections, and the intended warehouse. Sensitivity viewers also need Volume access, not only table access. See `docs/dashboard_acceptance.md`, `docs/sensitivity.md`, and `docs/reproducibility.md` for evidence and remaining limitations. Publishing and credential-embedding choices are separate actions, not implied by creation or review.
