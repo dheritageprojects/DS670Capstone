@@ -1,14 +1,18 @@
 # Final capstone submission package
 
-[Download the latest submission ZIP](https://github.com/dheritageprojects/DS670Capstone/raw/refs/heads/main/deliverables/Capstone_Final_Submission_v2.zip)
+[Download the latest submission ZIP](https://raw.githubusercontent.com/dheritageprojects/DS670Capstone/main/deliverables/Capstone_Final_Submission_v3.zip)
 
-The package contains the updated capstone report, 16-slide presentation, matching speaking script, PDF presentation preview, original dashboard captures including the scatter plot, pipeline diagram, project source, datasets and documentation.
+[Download the revised speaking script (Word)](https://raw.githubusercontent.com/dheritageprojects/DS670Capstone/main/deliverables/Presentation_Script_Final_v3.docx)
 
-The source snapshot inside the ZIP includes the later project updates documented in its README. This upload adds the package and this download page; it does not replace the repository's other source files.
+[Read the revised speaking script (PDF)](https://github.com/dheritageprojects/DS670Capstone/blob/main/deliverables/Presentation_Script_Final_v3.pdf)
+
+The latest package includes the report, 16-slide presentation with matching revised speaker notes, script in Word and PDF, dashboard captures, diagram, source snapshot, datasets and documentation. The classroom revision uses first-person narration, defines unfamiliar terms and provides a step-by-step live demonstration. Its rehearsal target is 14:25, including a 3:30 demonstration; verify the actual duration by rehearsing the complete recording.
+
+Scientific results and visible slides are unchanged from v2. The source snapshot inside the ZIP includes later project updates documented in its README; this upload does not replace the repository's other source files. The previous v2 ZIP remains available for reference.
 
 A 10–15 minute recorded presentation must still be submitted separately. No recording is included.
 
-- File size: 14,709,566 bytes
-- SHA-256: `6cc3177add84a0e5891275df81d9d82625633f6a2064daf5af3135e04339ddb1`
+- ZIP size: 14,791,652 bytes
+- SHA-256: `7a3f7ab6995951ca9460c05ad1c490f023228fa5597cbcc7b64ff98fb508eb3e`
 
-If GitHub opens a file page, choose **Download raw**. The direct download link above retrieves the ZIP.
+If GitHub opens a file page, choose **Download raw**.
